@@ -3,6 +3,7 @@ import java.util.*;
 
 import javax.swing.SwingUtilities;
 
+import com.razvan.gui.LoginWindow;
 import com.razvan.gui.UserDashboard;
 import com.razvan.installation_manager.ApplicationInstallManager;
 
@@ -19,7 +20,8 @@ public class PasswordVault {
 					ApplicationInstallManager.createKeyStoreFile();
 				}
 
-				new UserDashboard();
+				//new UserDashboard();
+				new LoginWindow();
 
 			}
 
