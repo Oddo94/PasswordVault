@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 
 public class LoginWindow extends JFrame {
 	//Labels for all the fields
@@ -102,6 +104,7 @@ public class LoginWindow extends JFrame {
 		//Adding action listeners to buttons
 		//this.addActionListenersToFormButtons(this);
 		addActionListenerToCheckBox();
+		addActionListenerToButtons();
 
 	}
 	
@@ -153,6 +156,25 @@ public class LoginWindow extends JFrame {
 			
 			
 		});
+	}
+	
+	private void addActionListenerToButtons() {
+	resetPasswordButton.addActionListener(actionEvent -> {
+		
+		int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		System.out.printf("Selected user option %d\n", userOption);
+		
+		if(userOption == 0) {
+			JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+		
+			String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+			
+			System.out.println("You entered the value " + userInput + "\n");
+			
+		}
+		
+	});
 	}
 
 
