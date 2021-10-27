@@ -7,11 +7,15 @@ import java.awt.GridLayout;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import com.razvan.installation_manager.ApplicationInstallManager;
+import com.razvan.user_authentication.LoginCredentialsChecker;
 
 
 public class LoginWindow extends JFrame {
@@ -175,9 +179,81 @@ public class LoginWindow extends JFrame {
 		}
 		
 	});
+	
+	loginButton.addActionListener(actionEvent -> {
+		//Checks if the user has provided the credentials before trying to login
+		if (!hasDataOnRequiredFields()) {
+			return;
+		}
+		
+		String userName = userNameField.getText();
+//		REMINDER!!
+//		Change to getPasswordMethod() and send the password as a byte[] array to LoginCredentialsChecker constructor
+//		and from there to the PasswordEncryptionManager constructor so that the password is never sent as String through different parts of the application
+		String password = passwordField.getText();
+		
+		LoginCredentialsChecker loginCredentialsChecker = new LoginCredentialsChecker(userName, password);		
+		
+		if (!loginCredentialsChecker.userExists()) {
+			JOptionPane.showMessageDialog(this,  "The requested user account does not exist! Please try again.");
+			return;
+		}
+		
+		if (!loginCredentialsChecker.hasValidCredentials()) {
+			JOptionPane.showMessageDialog(this, "Invalid username/password! Please try again.");
+			return;
+		}
+		
+		
+		boolean userHasData = loginCredentialsChecker.userHasData();
+	    new UserDashboard(userName, userHasData);
+//		setMainWindow(userNameField.getText(), userHasData);
+//		resetAllFields();
+//		this.setVisible(false);
+//		parentWindow.setVisible(true);
+
+	});
+	
+	 
+	
+	}
+	
+	//Checks if all the credentials are provided by the user before the login
+	private boolean hasDataOnRequiredFields() {
+		boolean isFilled = true;
+		String userName = userNameField.getText();
+
+		if (userNameField.getText().isEmpty() && passwordField.getPassword().length == 0) {
+
+			JOptionPane.showMessageDialog(this, "Please fill in the username and password fields!");
+			isFilled = false;			
+
+		} else if(userNameField.getText().isEmpty()) {
+
+			JOptionPane.showMessageDialog(this, "Please fill in the username field!");
+			isFilled = false;
+			
+		} else if(passwordField.getPassword().length == 0) {
+
+			JOptionPane.showMessageDialog(this, "Please fill in the password field!");
+			isFilled = false;		
+
+		}
+
+		return isFilled;
+				
+	}
+	
+	private void resetAllFields() {
+		userNameField.setText("");
+		passwordField.setText("");
+		newPasswordField.setText("");
+		confirmPasswordField.setText("");
 	}
 
+	
+	
 
-
+	
 
 }

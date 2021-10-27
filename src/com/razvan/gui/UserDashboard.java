@@ -35,18 +35,20 @@ public class UserDashboard extends JFrame {
 	}
 
 
-	public UserDashboard() {
-		//creaza fereastra de login
-		passwordDialog = new PasswordDialog(this, true);
-		passwordDialog.setSize(375, 300);
-		passwordDialog.setResizable(false);
-		passwordDialog.setLocationRelativeTo(null);
-		passwordDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		passwordDialog.setTitle("Login");
-		passwordDialog.setVisible(true);
-
-		//creaza fereastra principala-dashboardul userului
-		//setMainWindow();
+	public UserDashboard(String userName, boolean hasData) {
+//		//creaza fereastra de login
+//		passwordDialog = new PasswordDialog(this, true);
+//		passwordDialog.setSize(375, 300);
+//		passwordDialog.setResizable(false);
+//		passwordDialog.setLocationRelativeTo(null);
+//		passwordDialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+//		passwordDialog.setTitle("Login");
+//		passwordDialog.setVisible(true);
+//
+//		//creaza fereastra principala-dashboardul userului
+//		//setMainWindow();
+		
+		setMainWindow(userName, hasData);
 
 	}
 
@@ -56,12 +58,6 @@ public class UserDashboard extends JFrame {
 		UserTableOperations handler = new UserTableOperations(this, userName);
 		WindowBuilder builder = new WindowBuilder(this, handler, passwordDialog);
 
-		setSize(700, 700);
-		setTitle("Password Vault-" + userName + "'s" + " dashboard");
-		setWindowTitle();
-		setIconImage(new ImageIcon("resources/app_icon_64.png").getImage());
-
-		
 		/* If there is data to display, the table will be created and filled with the
 		 * respective data otherwise an empty table will be displayed
 		 */
@@ -70,13 +66,20 @@ public class UserDashboard extends JFrame {
 		} else {
 			handler.addTableToWindow(handler.createTable(0,4));
 		}
+		
 		handler.addMouseListenerToTable();
 		handler.addTableModelListener();
 		builder.setUpMenu();
 		builder.createNewEntryForm();
+		
+		setSize(700, 700);
+		setTitle("Password Vault-" + userName + "'s" + " dashboard");
+		setWindowTitle();
+		setIconImage(new ImageIcon("resources/app_icon_64.png").getImage());
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
 	}
 	
 
