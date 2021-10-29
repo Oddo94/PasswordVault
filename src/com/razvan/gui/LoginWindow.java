@@ -190,7 +190,7 @@ public class LoginWindow extends JFrame {
 //		REMINDER!!
 //		Change to getPasswordMethod() and send the password as a byte[] array to LoginCredentialsChecker constructor
 //		and from there to the PasswordEncryptionManager constructor so that the password is never sent as String through different parts of the application
-		String password = passwordField.getText();
+		char[] password = passwordField.getPassword();
 		
 		LoginCredentialsChecker loginCredentialsChecker = new LoginCredentialsChecker(userName, password);		
 		
@@ -206,15 +206,21 @@ public class LoginWindow extends JFrame {
 		
 		
 		boolean userHasData = loginCredentialsChecker.userHasData();
+	    this.setVisible(false);
+	    this.dispose();
 	    new UserDashboard(userName, userHasData);
+	    
 //		setMainWindow(userNameField.getText(), userHasData);
 //		resetAllFields();
 //		this.setVisible(false);
 //		parentWindow.setVisible(true);
-
+	    
 	});
 	
-	 
+	  resetButton.addActionListener(actionEvent -> {
+	    	resetAllFields();
+	    });
+
 	
 	}
 	

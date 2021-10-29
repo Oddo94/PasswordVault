@@ -9,6 +9,8 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -23,7 +25,31 @@ public class PasswordEncryptionManager {
 		
 	
 	//The method that prepares a string array containing the username, initialization vector and password hashcode
-	public String[] prepareAuthenticationData(String userName,String password) {
+//	public String[] prepareAuthenticationData(String userName,String password) {
+//		//Generating salt
+//		byte[] salt = getSalt(16);
+//		
+//		//Adding the salt array element to a StringBuilder and creating a String representation of it
+//		StringBuilder sb = new StringBuilder();
+//		
+//		//The values are separated by ","
+//		for (int i = 0; i < salt.length; i++) {	
+//			sb.append(salt[i] + ",");
+//		}
+//		
+//		String saltString = sb.toString();
+//		
+//		//Generating a String containing the password hashcode
+//		String hashedPassword = encryptPassword(password, salt);
+//		
+//		//Generating the String array containing the user authentication data
+//		String[] authenticationData = {userName, saltString, hashedPassword};
+//		
+//	    
+//		return authenticationData;
+//	}
+	
+	public String[] prepareAuthenticationData(String userName, char[] password) {
 		//Generating salt
 		byte[] salt = getSalt(16);
 		
@@ -185,12 +211,42 @@ public class PasswordEncryptionManager {
 	}
 	
 	//Generating the password hash using the previously created salt
-	public String encryptPassword(String password, byte[] salt) {
+//	public String encryptPassword(String password, byte[] salt) {		
+//		StringBuilder encryptedPassword = new StringBuilder();
+//		//System.out.println("ENCRYPT PASSWORD METHOD SALT PARAMETER: " + new String(Arrays.toString(salt)));
+//		
+//		try {
+//			PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+//			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+//			
+//			byte[] hash = factory.generateSecret(spec).getEncoded();
+//			//System.out.println("PARTIALLLY PROCESSED HASH BYTE ARRAY:" + new String(hash));
+//			
+//			BigInteger number = new BigInteger(1,hash);
+//			String partiallyProcessedPassword = number.toString(16);
+//			//System.out.println("PARTIALLY PROCESSED PASSWORD:" + partiallyProcessedPassword);
+//			encryptedPassword.append(partiallyProcessedPassword);
+//			while (encryptedPassword.length() < 32) {
+//				encryptedPassword.append("0");
+//			}
+//			
+//		} catch(NoSuchAlgorithmException ex) {
+//			ex.printStackTrace();
+//		} catch(InvalidKeySpecException ex) {
+//			ex.printStackTrace();
+//		}
+//		
+//		return encryptedPassword.toString();
+//		
+//	}
+	
+	public String encryptPassword(char[] password, byte[] salt) {		
 		StringBuilder encryptedPassword = new StringBuilder();
 		//System.out.println("ENCRYPT PASSWORD METHOD SALT PARAMETER: " + new String(Arrays.toString(salt)));
 		
 		try {
-			PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
+																	
+			PBEKeySpec spec = new PBEKeySpec(password, salt, 65536, 128);
 			SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			
 			byte[] hash = factory.generateSecret(spec).getEncoded();
@@ -263,5 +319,22 @@ public class PasswordEncryptionManager {
 		}
 		
 		return false;
+	}
+	
+	private char[] convertToCharArray(byte[] inputArray) {
+		if (inputArray == null) {
+			return null;
+		}
+		
+		if (inputArray.length == 0) {
+			return new char[0];
+		}
+		
+		char[] resultArray = new char[inputArray.length];
+		for (int i = 0; i < inputArray.length; i++) {
+			resultArray[i] = (char) inputArray[i];
+		}
+		
+		return resultArray;
 	}
 }

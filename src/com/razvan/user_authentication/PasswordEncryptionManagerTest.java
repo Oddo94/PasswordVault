@@ -11,29 +11,29 @@ import org.junit.jupiter.api.Test;
 class PasswordEncryptionManagerTest {
 	private PasswordEncryptionManager pem = new PasswordEncryptionManager();
 	
-	@Test
-	void testPasswordEncryption() throws UnsupportedEncodingException {
-		String[] authenticationData = pem.retrieveUserAuthenticationData("TEST5");
-		System.out.println("USERNAME:" + authenticationData[0]);
-		System.out.println("SALT:" + authenticationData[1]);
-		System.out.println("HASHED PASSWORD:" + authenticationData[2]);
-		
-		
-		String[] inputSalt = authenticationData[1].split(",");
-		byte[] salt = new byte[16];
-		
-		for (int i = 0; i < inputSalt.length; i++) {
-			salt[i] = Byte.parseByte(inputSalt[i]);
-		}
-		
-		
-		String expectedEncryptedPassword = authenticationData[2];
-		String actualEncryptedPassword = pem.encryptPassword("24AzF#ABC1",salt);
-		System.out.println("EXPECTED:" + expectedEncryptedPassword);
-		System.out.println("ACTUAL:" + actualEncryptedPassword);
-		assertEquals(expectedEncryptedPassword, actualEncryptedPassword);
-		
-		
-	}
+//	@Test
+//	void testPasswordEncryption() throws UnsupportedEncodingException {
+//		String[] authenticationData = pem.retrieveUserAuthenticationData("TEST5");
+//		System.out.println("USERNAME:" + authenticationData[0]);
+//		System.out.println("SALT:" + authenticationData[1]);
+//		System.out.println("HASHED PASSWORD:" + authenticationData[2]);
+//		
+//		
+//		String[] inputSalt = authenticationData[1].split(",");
+//		byte[] salt = new byte[16];
+//		
+//		for (int i = 0; i < inputSalt.length; i++) {
+//			salt[i] = Byte.parseByte(inputSalt[i]);
+//		}
+//		
+//		
+//		String expectedEncryptedPassword = authenticationData[2];
+//		String actualEncryptedPassword = pem.encryptPassword("24AzF#ABC1",salt);
+//		System.out.println("EXPECTED:" + expectedEncryptedPassword);
+//		System.out.println("ACTUAL:" + actualEncryptedPassword);
+//		assertEquals(expectedEncryptedPassword, actualEncryptedPassword);
+//		
+//		
+//	}
 
 }

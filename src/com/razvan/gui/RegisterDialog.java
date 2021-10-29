@@ -141,7 +141,7 @@ public class RegisterDialog extends JDialog{
 			if (pem.userExists(userName)) {
 				JOptionPane.showMessageDialog(this, "The entered user already exists!");
 			} else {
-				pem.writeAuthenticationDataToFile(pem.prepareAuthenticationData(userName, String.valueOf(passwordField.getPassword())));
+				pem.writeAuthenticationDataToFile(pem.prepareAuthenticationData(userName, passwordField.getPassword()));
 				createUserDataFile(userName);
 				createUserIvFile(userName);
 				setSecretKeyForUser(userName);

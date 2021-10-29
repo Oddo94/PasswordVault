@@ -11,10 +11,10 @@ public class LoginCredentialsChecker {
 	private String appDataPath;
 	private PasswordEncryptionManager pem;
 	private String userName;
-	private String password;
+	private char[] password;
 	
 	
-	public LoginCredentialsChecker(String userName, String password) {
+	public LoginCredentialsChecker(String userName, char[] password) {
 		this.userName = userName;
 		this.password = password;
 		
