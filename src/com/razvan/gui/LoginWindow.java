@@ -15,7 +15,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import com.razvan.installation_manager.ApplicationInstallManager;
-import com.razvan.user_authentication.LoginCredentialsChecker;
+import com.razvan.user_authentication.*;
 
 
 public class LoginWindow extends JFrame {
@@ -27,7 +27,7 @@ public class LoginWindow extends JFrame {
 	private JLabel newConfirmPasswordLabel = new JLabel("Confirm Password");
 	private JLabel blankLabel = new JLabel();
 	private EmptyBorder emptyBorder = new EmptyBorder(10, 20, 20 ,20);
-	
+
 
 	//Username text field
 	private JTextField userNameField = new JTextField(15);
@@ -67,7 +67,7 @@ public class LoginWindow extends JFrame {
 	JPanel authenticationPanel = new JPanel(new BorderLayout());
 
 	public LoginWindow() {
-		
+
 		initLoginWindow();
 		setSize(375, 300);
 		setResizable(false);
@@ -76,10 +76,10 @@ public class LoginWindow extends JFrame {
 		setTitle("Login");
 		add(authenticationPanel);
 		setVisible(true);
-		
-		
+
+
 	}
-	
+
 	private void initLoginWindow() {
 		//Creating the arrays containing the password dialog components
 		ArrayList<Component> loginFormComponents = new ArrayList<Component>(Arrays.asList(userNameLabel, userNameField, passwordLabel, passwordField, blankLabel, changePasswordCheckbox));
@@ -111,8 +111,8 @@ public class LoginWindow extends JFrame {
 		addActionListenerToButtons();
 
 	}
-	
-	
+
+
 	private void addComponentsToButtonPanel() {
 		buttonPanel.add(resetPasswordButton, FlowLayout.LEFT);
 		buttonPanel.add(loginButton, FlowLayout.LEFT);
@@ -141,8 +141,8 @@ public class LoginWindow extends JFrame {
 			panel.add(currentComponent);
 		}
 	}
-	
-	
+
+
 	private void addActionListenerToCheckBox() {
 		changePasswordCheckbox.addActionListener(new ActionListener() {
 			@Override
@@ -157,73 +157,84 @@ public class LoginWindow extends JFrame {
 					resetPasswordButton.setVisible(false);
 				}
 			}
-			
-			
+
+
 		});
 	}
-	
-	private void addActionListenerToButtons() {
-	resetPasswordButton.addActionListener(actionEvent -> {
-		
-		int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-		
-		System.out.printf("Selected user option %d\n", userOption);
-		
-		if(userOption == 0) {
-			JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-		
-			String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-			
-			System.out.println("You entered the value " + userInput + "\n");
-			
-		}
-		
-	});
-	
-	loginButton.addActionListener(actionEvent -> {
-		//Checks if the user has provided the credentials before trying to login
-		if (!hasDataOnRequiredFields()) {
-			return;
-		}
-		
-		String userName = userNameField.getText();
-//		REMINDER!!
-//		Change to getPasswordMethod() and send the password as a byte[] array to LoginCredentialsChecker constructor
-//		and from there to the PasswordEncryptionManager constructor so that the password is never sent as String through different parts of the application
-		char[] password = passwordField.getPassword();
-		
-		LoginCredentialsChecker loginCredentialsChecker = new LoginCredentialsChecker(userName, password);		
-		
-		if (!loginCredentialsChecker.userExists()) {
-			JOptionPane.showMessageDialog(this,  "The requested user account does not exist! Please try again.");
-			return;
-		}
-		
-		if (!loginCredentialsChecker.hasValidCredentials()) {
-			JOptionPane.showMessageDialog(this, "Invalid username/password! Please try again.");
-			return;
-		}
-		
-		
-		boolean userHasData = loginCredentialsChecker.userHasData();
-	    this.setVisible(false);
-	    this.dispose();
-	    new UserDashboard(userName, userHasData);
-	    
-//		setMainWindow(userNameField.getText(), userHasData);
-//		resetAllFields();
-//		this.setVisible(false);
-//		parentWindow.setVisible(true);
-	    
-	});
-	
-	  resetButton.addActionListener(actionEvent -> {
-	    	resetAllFields();
-	    });
 
-	
+	private void addActionListenerToButtons() {
+		resetPasswordButton.addActionListener(actionEvent -> {
+
+			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+			System.out.printf("Selected user option %d\n", userOption);
+
+			if(userOption == 0) {
+				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
+
+			
+			    int confirmationEmailSendingResult = resetManager.resetPassword();
+
+				if (confirmationEmailSendingResult == 0) {
+					JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(this , "Unable to send the confirmation email to the specified user address", "Password reset", JOptionPane.ERROR);
+					return;
+				}
+
+
+				String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+
+				System.out.println("You entered the value " + userInput + "\n");
+
+			}
+
+		});
+
+		loginButton.addActionListener(actionEvent -> {
+			//Checks if the user has provided the credentials before trying to login
+			if (!hasDataOnRequiredFields()) {
+				return;
+			}
+
+			String userName = userNameField.getText();
+			//		REMINDER!!
+			//		Change to getPasswordMethod() and send the password as a byte[] array to LoginCredentialsChecker constructor
+			//		and from there to the PasswordEncryptionManager constructor so that the password is never sent as String through different parts of the application
+			char[] password = passwordField.getPassword();
+
+			LoginCredentialsChecker loginCredentialsChecker = new LoginCredentialsChecker(userName, password);		
+
+			if (!loginCredentialsChecker.userExists()) {
+				JOptionPane.showMessageDialog(this,  "The requested user account does not exist! Please try again.");
+				return;
+			}
+
+			if (!loginCredentialsChecker.hasValidCredentials()) {
+				JOptionPane.showMessageDialog(this, "Invalid username/password! Please try again.");
+				return;
+			}
+
+
+			boolean userHasData = loginCredentialsChecker.userHasData();
+			this.setVisible(false);
+			this.dispose();
+			new UserDashboard(userName, userHasData);
+
+			//		setMainWindow(userNameField.getText(), userHasData);
+			//		resetAllFields();
+			//		this.setVisible(false);
+			//		parentWindow.setVisible(true);
+
+		});
+
+		resetButton.addActionListener(actionEvent -> {
+			resetAllFields();
+		});
+
+
 	}
-	
+
 	//Checks if all the credentials are provided by the user before the login
 	private boolean hasDataOnRequiredFields() {
 		boolean isFilled = true;
@@ -238,7 +249,7 @@ public class LoginWindow extends JFrame {
 
 			JOptionPane.showMessageDialog(this, "Please fill in the username field!");
 			isFilled = false;
-			
+
 		} else if(passwordField.getPassword().length == 0) {
 
 			JOptionPane.showMessageDialog(this, "Please fill in the password field!");
@@ -247,9 +258,9 @@ public class LoginWindow extends JFrame {
 		}
 
 		return isFilled;
-				
+
 	}
-	
+
 	private void resetAllFields() {
 		userNameField.setText("");
 		passwordField.setText("");
@@ -257,9 +268,9 @@ public class LoginWindow extends JFrame {
 		confirmPasswordField.setText("");
 	}
 
-	
-	
 
-	
+
+
+
 
 }

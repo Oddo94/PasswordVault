@@ -91,6 +91,28 @@ public class IOFileManager {
 		return sb.toString();
 	}
 	
+	//The method that retrieves the data for the selected user or if they don't exist returns null
+		public String[] retrieveUserAuthenticationData(String userName) {
+			File authenticationDataFile = new File( ApplicationInstallManager.APP_MAIN_FOLDER_PATH  + "/userAuthentication/authentication_data");
+			
+			try(FileReader fReader = new FileReader(authenticationDataFile);
+				BufferedReader bReader = new BufferedReader(fReader)) {
+
+				String line = null;
+				while((line = bReader.readLine()) != null) {
+					String[] lineData = line.split(";");
+					if(lineData[0].equals(userName)) {
+						return lineData;
+					}
+				}
+
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+
+			return null;
+		}
+	
 	
 	public void writeLoggingData(File file, String data) {
 		
