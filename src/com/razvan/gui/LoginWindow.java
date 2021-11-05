@@ -1,6 +1,7 @@
 package com.razvan.gui;
 
 import java.awt.BorderLayout;
+
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -8,14 +9,15 @@ import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.JTextComponent;
 
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.user_authentication.*;
+import com.razvan.utils.*;
 
 
 public class LoginWindow extends JFrame {
@@ -151,10 +153,12 @@ public class LoginWindow extends JFrame {
 					resetPasswordPanel.setVisible(true);
 					loginButton.setVisible(false);
 					resetPasswordButton.setVisible(true);
+					passwordField.setEnabled(false);
 				} else {
 					resetPasswordPanel.setVisible(false);
 					loginButton.setVisible(true);
 					resetPasswordButton.setVisible(false);
+					passwordField.setEnabled(true);
 				}
 			}
 
@@ -170,6 +174,11 @@ public class LoginWindow extends JFrame {
 			System.out.printf("Selected user option %d\n", userOption);
 
 			if(userOption == 0) {
+				//Password reset data check
+				if (checkPasswordResetInputData() == -1) {
+					return;
+				}
+				
 				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
 
 			
@@ -234,6 +243,41 @@ public class LoginWindow extends JFrame {
 
 
 	}
+	
+	
+	private int checkPasswordResetInputData() {
+		String userName = userNameField.getText();
+		ArrayList<JTextComponent> fieldList = new ArrayList<>(List.of(userNameField, newPasswordField, confirmPasswordField));
+		PasswordEncryptionManager pem = new PasswordEncryptionManager();
+		
+		if (!hasDataOnRequiredFields(fieldList)) {
+			JOptionPane.showMessageDialog(this, "Please fill in the username, new password and confirm password fields!" );
+			return -1;
+		}
+		
+		if (!pem.userExists(userName)) {
+			JOptionPane.showMessageDialog(this, "The requested user does not exist! Please try again.");
+			return -1;
+		}
+		
+		if (!AuthenticationDataChecker.checkPasswordStrength(newPasswordField.getPassword())) {			
+			JOptionPane.showMessageDialog(this, "The chosen password is not strong enough! "
+			+ "Your password should: \n 1. be at least 10 characters long \n 2. contain lowercase and uppercase letters(a-zA-Z), special characters(!@#*/) and digits(0-9)");
+			
+			return -1;
+		}
+		
+		
+		boolean passwordsMatch = Arrays.equals(newPasswordField.getPassword(), confirmPasswordField.getPassword());
+		
+		if (!passwordsMatch) {
+			JOptionPane.showMessageDialog(this, "The new password does not match the confirmation password!");
+			return -1;
+		}
+		
+		return 0;
+		
+	}
 
 	//Checks if all the credentials are provided by the user before the login
 	private boolean hasDataOnRequiredFields() {
@@ -266,6 +310,20 @@ public class LoginWindow extends JFrame {
 		passwordField.setText("");
 		newPasswordField.setText("");
 		confirmPasswordField.setText("");
+	}
+
+	private boolean hasDataOnRequiredFields (ArrayList<JTextComponent> fieldList) {
+		if (fieldList == null || fieldList.size() == 0) {
+			return false;
+		}
+		
+		for (JTextComponent field : fieldList) {
+			if ("".equals(field.getText()) || field.getText().matches("\\s+")) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 
