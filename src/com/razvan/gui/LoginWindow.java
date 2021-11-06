@@ -15,11 +15,14 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 
+import com.razvan.action_listener.PasswordResetActionListener;
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.user_authentication.*;
 import com.razvan.utils.*;
 
+import lombok.Getter;
 
+@Getter
 public class LoginWindow extends JFrame {
 	//Labels for all the fields
 	private JLabel titleLabel = new JLabel("Password Vault");
@@ -167,38 +170,40 @@ public class LoginWindow extends JFrame {
 	}
 
 	private void addActionListenerToButtons() {
-		resetPasswordButton.addActionListener(actionEvent -> {
-
-			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-			System.out.printf("Selected user option %d\n", userOption);
-
-			if(userOption == 0) {
-				//Password reset data check
-				if (checkPasswordResetInputData() == -1) {
-					return;
-				}
-				
-				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
-
-			
-			    int confirmationEmailSendingResult = resetManager.resetPassword();
-
-				if (confirmationEmailSendingResult == 0) {
-					JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(this , "Unable to send the confirmation email to the specified user address", "Password reset", JOptionPane.ERROR);
-					return;
-				}
-
-
-				String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-
-				System.out.println("You entered the value " + userInput + "\n");
-
-			}
-
-		});
+//		resetPasswordButton.addActionListener(actionEvent -> {
+//
+//			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+//
+//			System.out.printf("Selected user option %d\n", userOption);
+//
+//			if(userOption == 0) {
+//				//Password reset data check
+//				if (checkPasswordResetInputData() == -1) {
+//					return;
+//				}
+//				
+//				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
+//
+//			
+//			    int confirmationEmailSendingResult = resetManager.resetPassword();
+//
+//				if (confirmationEmailSendingResult == 0) {
+//					JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+//				} else {
+//					JOptionPane.showMessageDialog(this , "Unable to send the confirmation email to the specified user address", "Password reset", JOptionPane.ERROR);
+//					return;
+//				}
+//
+//
+//				String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+//
+//				System.out.println("You entered the value " + userInput + "\n");
+//
+//			}
+//
+//		});
+		
+		resetPasswordButton.addActionListener(new PasswordResetActionListener(this));
 
 		loginButton.addActionListener(actionEvent -> {
 			//Checks if the user has provided the credentials before trying to login
@@ -305,7 +310,7 @@ public class LoginWindow extends JFrame {
 
 	}
 
-	private void resetAllFields() {
+	public void resetAllFields() {
 		userNameField.setText("");
 		passwordField.setText("");
 		newPasswordField.setText("");

@@ -91,26 +91,46 @@ public class PasswordEncryptionManager {
 	
 
 	//Method used for writing authentication data to file
+//	public void writeAuthenticationDataToFile(String[] data) {
+//
+//		try (FileWriter fWriter = new FileWriter(authenticationDataFile, false);//the data is overwritten in the file(the false value); IF THE FILE IS OVERWRITTEN THEN ALL PREVIOUS USERS WILL BE DELETED!!!
+//			 BufferedWriter bWriter = new BufferedWriter(fWriter)) {
+//			
+//			for (int i = 0; i < data.length; i++) {
+//				
+//				if (i == data.length - 1) {
+//					bWriter.write(data[i] + "\n");
+//					break;
+//				}
+//				
+//				bWriter.write(data[i] + ";");
+//			}
+//			
+//		}catch(IOException ex) {
+//			ex.printStackTrace();
+//		}	
+//	}
+//	
+	
 	public void writeAuthenticationDataToFile(String[] data) {
 
-		try (FileWriter fWriter = new FileWriter(authenticationDataFile, true);//the data is overwritten in the file(the false value); IF THE FILE IS OVERWRITTEN THEN ALL PREVIOUS USERS WILL BE DELETED!!!
+		try (FileWriter fWriter = new FileWriter(authenticationDataFile, false);//the data is overwritten in the file(the false value); IF THE FILE IS OVERWRITTEN THEN ALL PREVIOUS USERS WILL BE DELETED!!!
 			 BufferedWriter bWriter = new BufferedWriter(fWriter)) {
 			
 			for (int i = 0; i < data.length; i++) {
 				
-				if (i == data.length - 1) {
+				if (i < data.length - 1) {
 					bWriter.write(data[i] + "\n");
-					break;
+					continue;
 				}
 				
-				bWriter.write(data[i] + ";");
+				bWriter.write(data[i]);
 			}
 			
 		}catch(IOException ex) {
 			ex.printStackTrace();
 		}	
 	}
-	
 	
 	//The method that retrieves the data for the selected user or if they don't exist returns null
 	public String[] retrieveUserAuthenticationData(String userName) {
@@ -313,7 +333,7 @@ public class PasswordEncryptionManager {
 	
 	//Checks if the hashcode of the provided password is equal to the one that was previously stored
 	public boolean hashCodesMatch(String expectedHashCode, String actualHashCode) {
-		
+		//Refactor using Object equals method to avoid NPE in case one of the arguments is null
 		if (expectedHashCode.equals(actualHashCode)) {
 			return true;
 		}
