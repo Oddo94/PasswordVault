@@ -54,11 +54,14 @@ public class PasswordResetActionListener implements ActionListener {
 
 
 		String userName = userNameField.getText();
-		Map<String,String> senderAccountCredentialsMap = resetManager.retrieveSenderEmailData();//Retrieving credentials for the account that will send the confirmation email
+		//Map<String,String> senderAccountCredentialsMap = resetManager.retrieveSenderEmailData();//Retrieving credentials for the account that will send the confirmation email
+		SenderAccountCredentials accountCredentials = resetManager.retrieveSenderEmailData();
+		
 		String userEmail = resetManager.retrieveUserEmail(userName, 3);//Retrieving the current user email to which the confirmation code will be sent
 		
 		//Sending confirmation email
-		int confirmationEmailSendingResult = resetManager.sendConfirmationEmail(senderAccountCredentialsMap, userEmail);
+//		int confirmationEmailSendingResult = resetManager.sendConfirmationEmail(senderAccountCredentialsMap, userEmail);
+		int confirmationEmailSendingResult = resetManager.sendConfirmationEmail(accountCredentials, userEmail);
 
 		if (confirmationEmailSendingResult == 0) {
 			JOptionPane.showMessageDialog(loginWindow, "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
