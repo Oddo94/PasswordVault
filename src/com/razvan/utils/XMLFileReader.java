@@ -61,9 +61,10 @@ public class XMLFileReader {
 
 	}
 
-	private void createFile() throws Exception {
+	public  void createFile() throws Exception {
 		SenderAccountCredentials accountCredentials = new SenderAccountCredentials();
-
+		accountCredentials.setAccountAddress("Add email address here");
+		accountCredentials.setAccountPassword("Add email password here");
 	
 		JAXBContext jaxbContext = JAXBContext.newInstance(SenderAccountCredentials.class);		
 
