@@ -47,16 +47,37 @@ public class PasswordResetManager {
 //
 //
 //	}
-//	
-	public Map<String,String> retrieveSenderEmailData() {
-		Map<String,String> senderAccountCredentialsMap;
+//
+	
+//	public Map<String,String> retrieveSenderEmailData() {
+//		Map<String,String> senderAccountCredentialsMap;
+//		
+//		try {
+//			
+//		XMLFileReader xmlReader = new XMLFileReader(file);
+//		IOFileManager fileManager = new IOFileManager();
+//
+//		senderAccountCredentialsMap = xmlReader.readXMLFile();
+//
+//		} catch (Exception ex) {
+//			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
+//			ErrorDisplayManager.displayError(null, stackTrace, messageType.EXCEPTION);
+//			
+//			return null;
+//		}
+//
+//		return senderAccountCredentialsMap;
+//	}
+	
+	public SenderAccountCredentials retrieveSenderEmailData() {
 		
+		SenderAccountCredentials accountCredentials = null;
 		try {
 			
 		XMLFileReader xmlReader = new XMLFileReader(file);
 		IOFileManager fileManager = new IOFileManager();
 
-		senderAccountCredentialsMap = xmlReader.readXMLFile();
+		accountCredentials = xmlReader.readFileAsObject();
 
 		} catch (Exception ex) {
 			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
@@ -65,23 +86,53 @@ public class PasswordResetManager {
 			return null;
 		}
 
-		return senderAccountCredentialsMap;
+		return accountCredentials;
 	}
 
-	public int sendConfirmationEmail(Map<String,String> senderAccountCredentialsMap, String userEmail) {
-		if (senderAccountCredentialsMap == null || userEmail == null) {
+//	public int sendConfirmationEmail(Map<String,String> senderAccountCredentialsMap, String userEmail) {
+//		if (senderAccountCredentialsMap == null || userEmail == null) {
+//			return - 1;
+//		}
+//		
+//		try {
+//			CodeGenerator codeGenerator = new CodeGenerator();
+//			
+//			String from = senderAccountCredentialsMap.get("accountAddress");
+//		    String to = userEmail;
+//		    String subject = "Password Vault-password reset confirmation";
+//		    confirmationCode = codeGenerator.getConfirmationCode(64);
+//		    String message = String.format("A password reset was requested for the PasswordVault application account associated with this email address.Please use the following confirmation code to finish the password reset process: %s.\nIf you are not the intended recipient of this message please delete it immediately.", confirmationCode);
+//		    String sendingAccountPassword = senderAccountCredentialsMap.get("accountPassword");
+//		    
+//		    EmailSender mailSender = new EmailSender(from, to, subject, message, sendingAccountPassword);
+//		    
+//		    mailSender.sendEmail();
+//			
+//		} catch (Exception ex){
+//			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
+//			ErrorDisplayManager.displayError(null, stackTrace, messageType.EXCEPTION);
+//			
+//			return -1;
+//		}
+//		
+//		return 0;
+//	   	
+//	}
+	
+	public int sendConfirmationEmail(SenderAccountCredentials accountCredentials, String userEmail) {
+		if (accountCredentials == null || userEmail == null) {
 			return - 1;
 		}
 		
 		try {
 			CodeGenerator codeGenerator = new CodeGenerator();
 			
-			String from = senderAccountCredentialsMap.get("accountAddress");
+			String from = accountCredentials.getAccountAddress();
 		    String to = userEmail;
 		    String subject = "Password Vault-password reset confirmation";
 		    confirmationCode = codeGenerator.getConfirmationCode(64);
-		    String message = String.format("A password reset was requested for the PasswordVault application account associated with this email address.Please use the following confirmation code to finish the password reset process: %s.\nIf you are not the intended recipient of this message please delete it immediately.", confirmationCode);
-		    String sendingAccountPassword = senderAccountCredentialsMap.get("accountPassword");
+		    String message = String.format("A password reset was requested for the PasswordVault application account associated with this email address.Please use the following confirmation code to finish the password reset process: %s\nIf you are not the intended recipient of this message please delete it immediately.", confirmationCode);
+		    String sendingAccountPassword = accountCredentials.getAccountPassword();
 		    
 		    EmailSender mailSender = new EmailSender(from, to, subject, message, sendingAccountPassword);
 		    
