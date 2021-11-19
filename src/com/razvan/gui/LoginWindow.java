@@ -120,9 +120,9 @@ public class LoginWindow extends JFrame {
 
 	private void addComponentsToButtonPanel() {
 		buttonPanel.add(resetPasswordButton, FlowLayout.LEFT);
-		buttonPanel.add(loginButton, FlowLayout.LEFT);
+		buttonPanel.add(registerButton, FlowLayout.LEFT);
 		buttonPanel.add(resetButton, FlowLayout.CENTER);
-		buttonPanel.add(registerButton, FlowLayout.RIGHT);
+		buttonPanel.add(loginButton, FlowLayout.RIGHT);
 	}
 
 	private void setupSubPanels() {
@@ -246,6 +246,12 @@ public class LoginWindow extends JFrame {
 			resetAllFields();
 		});
 
+		registerButton.addActionListener(actionEvent ->  {
+			 this.setVisible(false);
+			 
+			 new RegisterWindow();
+			
+		});
 
 	}
 	
