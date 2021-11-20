@@ -1,6 +1,7 @@
 package com.razvan.gui;
 
 import java.awt.BorderLayout;
+
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
@@ -10,11 +11,15 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
+import com.razvan.action_listener.RegisterActionListener;
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.user_authentication.PasswordEncryptionManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
 import com.razvan.utils.GUIInputChecker;
+import lombok.*;
 
+@Getter
+@Setter
 public class RegisterWindow extends JFrame {
 
 	private JLabel titleLabel;
@@ -155,6 +160,9 @@ public class RegisterWindow extends JFrame {
 			new LoginWindow();
 
 		});
+		
+		registerButton.addActionListener(new RegisterActionListener(this));
+		
 
 	}
 }

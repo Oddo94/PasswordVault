@@ -6,10 +6,13 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
+
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.user_authentication.PasswordEncryptionManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
@@ -29,11 +32,13 @@ public class RegisterDialog extends JDialog{
 	JButton resetButton = new JButton("Reset");
 	JButton redirectButton = new JButton("Login");
 	
+	
 	//The application main folder path 
 	//private String appDataPath = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault";
 	private String appDataPath = ApplicationInstallManager.APP_MAIN_FOLDER_PATH;
-    private PasswordEncryptionManager pem = new PasswordEncryptionManager();
-    private UserDataSecurityManager securityManager = new UserDataSecurityManager();
+	private PasswordEncryptionManager pem = new PasswordEncryptionManager();
+	private UserDataSecurityManager securityManager = new UserDataSecurityManager();
+
 
 	public RegisterDialog(JFrame parentWindow,JDialog loginDialog, boolean modal) {
 		super(parentWindow, modal);
