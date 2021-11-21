@@ -3,6 +3,8 @@ package com.razvan.action_listener;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -54,18 +56,24 @@ public class RegisterActionListener implements ActionListener {
 			return;
 		}
 		
-		JOptionPane.showMessageDialog(null,  "All checks were successfully passed!", "Register test message", JOptionPane.INFORMATION_MESSAGE );
+		//JOptionPane.showMessageDialog(null,  "All checks were successfully passed!", "Register test message", JOptionPane.INFORMATION_MESSAGE );
 		
 		int userCreationOption = JOptionPane.showConfirmDialog(null, "Are you sure that you want to create a new user based on the provided data?", "Register", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-		System.out.println("USER OPTION: " + userCreationOption);
+		//System.out.println("USER OPTION: " + userCreationOption);
 		//Checks if the user selected the "No" option or if he closed the confirmation dialog
 		if (userCreationOption == 1 || userCreationOption == -1) {
 			return;
 		}
 			
-	    JOptionPane.showMessageDialog(null,  "The user confirmed the creation option", "Register test message", JOptionPane.INFORMATION_MESSAGE );
-	    GUIInputChecker.resetFields(inputFieldsList);
+	    //JOptionPane.showMessageDialog(null,  "The user confirmed the creation option", "Register test message", JOptionPane.INFORMATION_MESSAGE);
+		String userName = userNameField.getText();
+		char[] password = passwordField.getPassword();
+		String emailAddress = emailAddressField.getText();
+		
+		//Calls the user creation method with the validated data
+		createNewUser(userName, password, emailAddress);
+	   
 	}
 
 
@@ -103,4 +111,81 @@ public class RegisterActionListener implements ActionListener {
 		
 		return true;
 	}
+	
+	private void createNewUser(String userName, char[] password, String emailAddress) {
+		if(userName == null || password == null || emailAddress == null) {
+			return;
+		}
+			
+		if (pem.userExists(userName)) {
+			JOptionPane.showMessageDialog(null, "The entered user already exists!", "Register", JOptionPane.WARNING_MESSAGE);
+		} else {
+			
+			//The array containing the authentication data for the newly created user
+			String[] userData = pem.prepareAuthenticationData(userName, password, emailAddress);
+			String formattedUserData = formatNewUserData(userData);
+			String[] newUserAuthenticationData = new String[] {formattedUserData};
+			//Writes the data to the file containing the authentication data of all the users
+			pem.writeAuthenticationDataToFile(newUserAuthenticationData, true);
+			//Creates the rest of the files needed for the newly created user
+			createUserDataFile(userName);
+			createUserIvFile(userName);
+			setSecretKeyForUser(userName);
+			
+			JOptionPane.showMessageDialog(null, "Your user was successfully created!", "Register", JOptionPane.INFORMATION_MESSAGE);
+			GUIInputChecker.resetFields(inputFieldsList);
+		}
+		
+		
+	}
+	
+	//The method for creating the new user data file
+		private void createUserDataFile(String userName) {
+			
+			try {
+				File file = new File(appDataPath + "/userData/" + userName);
+				file.createNewFile();
+
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		//The method for creating the new user initialization vector file
+		private void createUserIvFile(String userName) {
+			String suffix = "-Iv";
+			String userIvFileName = userName + suffix;
+			
+			try {
+				
+				File ivSource =  new File(appDataPath + "/security/iv/" + userIvFileName);
+				ivSource.createNewFile();
+
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		//The method for creating a secret key for the new user
+		public void setSecretKeyForUser(String userName) {
+			
+			securityManager.storeSecretKey(securityManager.createAESKey(), userName);
+		}
+		
+		
+		private String formatNewUserData(String[] data) {
+			Objects.requireNonNull(data, "The data provided for formatting cannot be null");
+			
+			StringBuilder formattedData = new StringBuilder();
+			for (int i = 0; i < data.length; i++) {
+				if (i < data.length - 1) {
+					formattedData.append(data[i] + ";");
+					continue;
+				}
+				
+				formattedData.append(data[i] + "\n");	
+			}
+			
+			return formattedData.toString();
+		}
 }

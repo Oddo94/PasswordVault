@@ -37,6 +37,8 @@ public class EmailSender {
 		properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		properties.put("mail.smtp.auth", "true");
 		properties.put("mail.smtp.port", "465");
+		//CHANGE
+		properties.put("mail.smtp.starttls.enable", "true");
 		
 		Authenticator authenticator = new Authenticator() {		
 			protected PasswordAuthentication getPasswordAuthentication() {

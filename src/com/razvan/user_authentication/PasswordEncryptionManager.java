@@ -9,6 +9,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -49,7 +50,35 @@ public class PasswordEncryptionManager {
 //		return authenticationData;
 //	}
 	
-	public String[] prepareAuthenticationData(String userName, char[] password) {
+//	public String[] prepareAuthenticationData(String userName, char[] password) {
+//		//Generating salt
+//		byte[] salt = getSalt(16);
+//		
+//		//Adding the salt array element to a StringBuilder and creating a String representation of it
+//		StringBuilder sb = new StringBuilder();
+//		
+//		//The values are separated by ","
+//		for (int i = 0; i < salt.length; i++) {	
+//			sb.append(salt[i] + ",");
+//		}
+//		
+//		String saltString = sb.toString();
+//		
+//		//Generating a String containing the password hashcode
+//		String hashedPassword = encryptPassword(password, salt);
+//		
+//		//Generating the String array containing the user authentication data
+//		String[] authenticationData = {userName, saltString, hashedPassword};
+//		
+//	    
+//		return authenticationData;
+//	}
+	
+	public String[] prepareAuthenticationData(String userName, char[] password, String emailAddress) {
+		Objects.requireNonNull(userName, "The user name provided for preparing the authentication data cannot be null");
+		Objects.requireNonNull(password, "The password provided for preparing the authentication data cannot be null");
+		Objects.requireNonNull(password, "The email address provided for preparing the authentication data cannot be null");
+		
 		//Generating salt
 		byte[] salt = getSalt(16);
 		
@@ -67,11 +96,14 @@ public class PasswordEncryptionManager {
 		String hashedPassword = encryptPassword(password, salt);
 		
 		//Generating the String array containing the user authentication data
-		String[] authenticationData = {userName, saltString, hashedPassword};
+		String[] authenticationData = {userName, saltString, hashedPassword, emailAddress};
 		
 	    
 		return authenticationData;
 	}
+	
+	
+	
 	
 	//Method used for reading user authentication data
 	public String[] readAuthenticationData() {
@@ -112,9 +144,12 @@ public class PasswordEncryptionManager {
 //	}
 //	
 	
-	public void writeAuthenticationDataToFile(String[] data) {
-
-		try (FileWriter fWriter = new FileWriter(authenticationDataFile, false);//the data is overwritten in the file(the false value); IF THE FILE IS OVERWRITTEN THEN ALL PREVIOUS USERS WILL BE DELETED!!!
+	//Method for writing the authentication data to file
+	//It receives the data to be written and a flag indicating whether the data should be appended to file(e.g: at user creation) or overwritten(e.g: at password reset)
+	public void writeAuthenticationDataToFile(String[] data, boolean appendData) {
+	
+		
+		try (FileWriter fWriter = new FileWriter(authenticationDataFile, appendData);//the data is overwritten in the file(the false value); IF THE FILE IS OVERWRITTEN THEN ALL PREVIOUS USERS WILL BE DELETED!!!
 			 BufferedWriter bWriter = new BufferedWriter(fWriter)) {
 			
 			for (int i = 0; i < data.length; i++) {
@@ -124,8 +159,14 @@ public class PasswordEncryptionManager {
 					continue;
 				}
 				
-				bWriter.write(data[i]);
+				if(appendData == true) {
+					bWriter.write(data[i]);	
+				} else {
+					bWriter.write(data[i] + ";");	
+				}
+						
 			}
+			
 			
 		}catch(IOException ex) {
 			ex.printStackTrace();

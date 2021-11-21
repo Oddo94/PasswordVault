@@ -90,8 +90,9 @@ public class PasswordResetActionListener implements ActionListener {
 		String saltString = pem.converSaltToString(salt);
 		String resetPasswordHashCode = pem.encryptPassword(password, salt);
 		
-		
-		pem.writeAuthenticationDataToFile(pem.resetPassword(userName, userAuthenticationData, saltString, resetPasswordHashCode));
+		//The modified data after the password reset if performed
+		String[] newData = pem.resetPassword(userName, userAuthenticationData, saltString, resetPasswordHashCode);
+		pem.writeAuthenticationDataToFile(newData, false);
 		
 		JOptionPane.showMessageDialog(loginWindow, "Your password was successfully reset!");
 
