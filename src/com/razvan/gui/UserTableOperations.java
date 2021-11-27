@@ -30,7 +30,6 @@ public class UserTableOperations extends MouseAdapter {
 	private boolean hasCanceledChange;
 	private boolean hasCopiedCellContent;
 	private String oldCellValue;
-//	private String appDataPath = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault";
 	private String appDataPath = ApplicationInstallManager.APP_MAIN_FOLDER_PATH;
 	private String userFileName;
 	private IOFileManager fileManager = new IOFileManager();
@@ -50,9 +49,8 @@ public class UserTableOperations extends MouseAdapter {
 	public JTable fillTable(JTable table) {
 		DefaultTableModel dtm =(DefaultTableModel) table.getModel();
 
-		//File containing the encrypyed userData(it will become a parameter of the fillTable method)-THE FILE CONTAINING USER DATA WILL HAVE TO BE NAMED  AFTER THE USER
+		//File containing the encrypted userData(it will become a parameter of the fillTable method)-THE FILE CONTAINING USER DATA WILL HAVE TO BE NAMED  AFTER THE USER
 		File fileToRead = new File(appDataPath + "/userData/" + userFileName);
-		//MODIFIED CODE!!
 		//Creating the string that represents the name of the user Iv storage file(by concatenating the user name and the suffix "-Iv")
 		String suffix = "-Iv";
 		String userIvFileName = userFileName + suffix;

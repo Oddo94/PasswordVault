@@ -35,7 +35,6 @@ public class UserDataSecurityManager {
 	private static final String AES_CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
 	private static final String PASSWORD_STRING = "Ho6-Pq8%";
 	//Custom file used as KeyStore
-//	private File secretKeyStorageFile =  new File("C:/Users//Razvan/AppData//Roaming/PasswordVault/security/sk/secret_key_store.ks");
 	private File secretKeyStorageFile =  new File(ApplicationInstallManager.APP_MAIN_FOLDER_PATH + "/security/sk/secret_key_store.ks");
 	private IOFileManager fileManager = new IOFileManager();
 	
@@ -136,10 +135,7 @@ public class UserDataSecurityManager {
 		
 		//Creating the KeyStore ProtectionParameter object
 		ProtectionParameter protectionParameter = new KeyStore.PasswordProtection(password);
-		
-		//Create the SecretKey object
-		//SecretKey mySecretKey = new SecretKeySpec(secretKey.getBytes(), "DES");
-		
+			
 		//Create a SecreKeyEntry object
 		KeyStore.SecretKeyEntry secretKeyEntry = new KeyStore.SecretKeyEntry(secretKey);
 		

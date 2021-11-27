@@ -7,7 +7,6 @@
 *.ear
 *.nar
 hs_err_pid*
-!/lib*.jar
 
 ##############################
 ## Maven

@@ -4,7 +4,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.razvan.gui.UserDashboard.PasswordDialog;
+//import com.razvan.gui.UserDashboard.PasswordDialog;
 //import datechooser.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 public class WindowBuilder extends MouseAdapter {
 	private UserDashboard userDashboard;
 	private UserTableOperations handler;
-	private PasswordDialog passwordDialog;
+	//private PasswordDialog passwordDialog;
 	private JPanel parentPanel = new JPanel(new BorderLayout());
 	//Creating the entry form panel
 	private JPanel newEntryForm = new JPanel();
@@ -35,10 +35,10 @@ public class WindowBuilder extends MouseAdapter {
 	
 	
 	
-	public WindowBuilder(UserDashboard userDashboard, UserTableOperations handler, PasswordDialog passwordDialog) {
+	public WindowBuilder(UserDashboard userDashboard, UserTableOperations handler) {
 		this.userDashboard = userDashboard;
 		this.handler = handler;
-		this.passwordDialog = passwordDialog;
+		//this.passwordDialog = passwordDialog;
 	}
 	
 	public void createNewEntryForm() {
@@ -111,20 +111,12 @@ public class WindowBuilder extends MouseAdapter {
     	logoutOption.addActionListener(actionEvent ->{
     		//CHANGE-removes all the rows from the user data table when the user logs out of his account
     		DefaultTableModel userDataTableModel = handler.getUserDataTableModel();
-//    		userDataTableModel.setRowCount(0);
-//    		userDataTableModel.setRowCount(2);
-    		
-//    		int rowCount = userDataTableModel.getRowCount();
-//    		for (int i = rowCount - 1; i >= 0; i--) {
-//    			userDataTableModel.removeRow(i);    		
-//    	    }
-    		
-            //userDashboard = null;	
+    		LoginWindow loginWindow = new LoginWindow();
     		
     		userDashboard.setVisible(false);
     		//CHANGE-removes the user dashboard window after logout
     		userDashboard.dispose();
-    		passwordDialog.setVisible(true);
+    		loginWindow.setVisible(true);
     		
     	});
     	
@@ -192,7 +184,6 @@ public class WindowBuilder extends MouseAdapter {
 			}
 			
 			String rowData = collectNewEntryData(fieldsArray);
-			System.out.println(rowData);
 
 			handler.addNewEntry(rowData.toString());
 			UserTableOperations.userOption = JOptionPane.showConfirmDialog(null,"Do you want to insert a new row?","Data saving",JOptionPane.YES_NO_CANCEL_OPTION);
