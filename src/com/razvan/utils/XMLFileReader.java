@@ -27,6 +27,7 @@ public class XMLFileReader {
 		this.xmlFile = xmlFile;
 	}
 
+	//Method for reading the XML file containing the sender account credentials
 	public Map<String,String> readXMLFile() throws Exception{
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -61,7 +62,8 @@ public class XMLFileReader {
 
 	}
 
-	public  void createFile() throws Exception {
+	//Method for creating the empty file that will contain the sender account credentials
+	public void createFile() throws Exception {
 		SenderAccountCredentials accountCredentials = new SenderAccountCredentials();
 		accountCredentials.setAccountAddress("Add email address here");
 		accountCredentials.setAccountPassword("Add email password here");
@@ -79,6 +81,7 @@ public class XMLFileReader {
 
 	}
 
+	//Validation method used to check if the provided file is of xml type
 	private boolean isXmlFile(File file) {
 		if (file == null) {
 			return false;

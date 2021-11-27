@@ -27,150 +27,83 @@ public class PasswordResetManager {
 		this.confirmationCode = null;
 	}
 
-//	public int performPasswordReset() {
-//		Map<String,String> senderAccountCredentialsMap = retrieveSenderEmailData();
-//		String userEmail = retrieveUserEmail(userName, 3);
-//		
-//		
-//		if (senderAccountCredentialsMap != null) {
-//			return -1;
-//		}
-//		
-//		sendConfirmationEmail(senderAccountCredentialsMap, userEmail);
-//		
-//		
-//		
-//	}
-//	
-//	
-//	public int resetPassword() {
-//
-//
-//	}
-//
-	
-//	public Map<String,String> retrieveSenderEmailData() {
-//		Map<String,String> senderAccountCredentialsMap;
-//		
-//		try {
-//			
-//		XMLFileReader xmlReader = new XMLFileReader(file);
-//		IOFileManager fileManager = new IOFileManager();
-//
-//		senderAccountCredentialsMap = xmlReader.readXMLFile();
-//
-//		} catch (Exception ex) {
-//			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
-//			ErrorDisplayManager.displayError(null, stackTrace, messageType.EXCEPTION);
-//			
-//			return null;
-//		}
-//
-//		return senderAccountCredentialsMap;
-//	}
-	
+
+	//Method for retrieving the data necessary to connect to the email address used for sending confirmation code to the user
 	public SenderAccountCredentials retrieveSenderEmailData() {
-		
+
 		SenderAccountCredentials accountCredentials = null;
 		try {
-			
-		XMLFileReader xmlReader = new XMLFileReader(file);
-		IOFileManager fileManager = new IOFileManager();
 
-		accountCredentials = xmlReader.readFileAsObject();
+			XMLFileReader xmlReader = new XMLFileReader(file);
+			IOFileManager fileManager = new IOFileManager();
+
+			accountCredentials = xmlReader.readFileAsObject();
 
 		} catch (Exception ex) {
 			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
 			ErrorDisplayManager.displayError(null, stackTrace, messageType.EXCEPTION);
-			
+
 			return null;
 		}
 
 		return accountCredentials;
 	}
 
-//	public int sendConfirmationEmail(Map<String,String> senderAccountCredentialsMap, String userEmail) {
-//		if (senderAccountCredentialsMap == null || userEmail == null) {
-//			return - 1;
-//		}
-//		
-//		try {
-//			CodeGenerator codeGenerator = new CodeGenerator();
-//			
-//			String from = senderAccountCredentialsMap.get("accountAddress");
-//		    String to = userEmail;
-//		    String subject = "Password Vault-password reset confirmation";
-//		    confirmationCode = codeGenerator.getConfirmationCode(64);
-//		    String message = String.format("A password reset was requested for the PasswordVault application account associated with this email address.Please use the following confirmation code to finish the password reset process: %s.\nIf you are not the intended recipient of this message please delete it immediately.", confirmationCode);
-//		    String sendingAccountPassword = senderAccountCredentialsMap.get("accountPassword");
-//		    
-//		    EmailSender mailSender = new EmailSender(from, to, subject, message, sendingAccountPassword);
-//		    
-//		    mailSender.sendEmail();
-//			
-//		} catch (Exception ex){
-//			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
-//			ErrorDisplayManager.displayError(null, stackTrace, messageType.EXCEPTION);
-//			
-//			return -1;
-//		}
-//		
-//		return 0;
-//	   	
-//	}
-	
+
+	//Method for sending the confirmation email to the specified user email address
 	public int sendConfirmationEmail(SenderAccountCredentials accountCredentials, String userEmail) {
 		if (accountCredentials == null || userEmail == null) {
 			return - 1;
 		}
-		
+
 		try {
 			CodeGenerator codeGenerator = new CodeGenerator();
-			
+
 			String from = accountCredentials.getAccountAddress();
-		    String to = userEmail;
-		    String subject = "Password Vault-password reset confirmation";
-		    confirmationCode = codeGenerator.getConfirmationCode(64);
-		    String message = String.format("A password reset was requested for the PasswordVault application account associated with this email address.Please use the following confirmation code to finish the password reset process: %s\nIf you are not the intended recipient of this message please delete it immediately.", confirmationCode);
-		    String sendingAccountPassword = accountCredentials.getAccountPassword();
-		    
-		    EmailSender mailSender = new EmailSender(from, to, subject, message, sendingAccountPassword);
-		    
-		    mailSender.sendEmail();
-			
+			String to = userEmail;
+			String subject = "Password Vault-password reset confirmation";
+			confirmationCode = codeGenerator.getConfirmationCode(64);
+			String message = String.format("A password reset was requested for the PasswordVault application account associated with this email address.Please use the following confirmation code to finish the password reset process: %s\nIf you are not the intended recipient of this message please delete it immediately.", confirmationCode);
+			String sendingAccountPassword = accountCredentials.getAccountPassword();
+
+			EmailSender mailSender = new EmailSender(from, to, subject, message, sendingAccountPassword);
+
+			mailSender.sendEmail();
+
 		} catch (Exception ex){
 			String stackTrace = ErrorDisplayManager.getStackTraceMessage(ex);
 			ErrorDisplayManager.displayError(null, stackTrace, messageType.EXCEPTION);
-			
+
 			return -1;
 		}
-		
+
 		return 0;
-	   	
+
 	}
 
+	//Method used for retrieving the user email to which the confirmation code will be sent
 	public String retrieveUserEmail(String userName, int dataIndex) {
 		IOFileManager fileManager = new IOFileManager();
 
 		String[] userAuthenticationData = fileManager.retrieveUserAuthenticationData(userName);
-		
+
 		if (userAuthenticationData == null || userAuthenticationData.length == 0) {
 			return null;
 		}
-		
+
 		if (dataIndex < 0 || dataIndex >= userAuthenticationData.length) {
 			return null;
 		}
-		
-		
+
+
 		return userAuthenticationData[dataIndex];
-		
+
 	}
 
 	public boolean confirmationCodesMatch(String generatedConfirmationCode, String userInputConfirmationCode) {
-		
+
 		return Objects.equals(generatedConfirmationCode, userInputConfirmationCode);
-			
+
 	}
 
 

@@ -112,15 +112,6 @@ public class WindowBuilder extends MouseAdapter {
     		//CHANGE-removes all the rows from the user data table when the user logs out of his account
     		DefaultTableModel userDataTableModel = handler.getUserDataTableModel();
     		LoginWindow loginWindow = new LoginWindow();
-//    		userDataTableModel.setRowCount(0);
-//    		userDataTableModel.setRowCount(2);
-    		
-//    		int rowCount = userDataTableModel.getRowCount();
-//    		for (int i = rowCount - 1; i >= 0; i--) {
-//    			userDataTableModel.removeRow(i);    		
-//    	    }
-    		
-            //userDashboard = null;	
     		
     		userDashboard.setVisible(false);
     		//CHANGE-removes the user dashboard window after logout
@@ -193,7 +184,6 @@ public class WindowBuilder extends MouseAdapter {
 			}
 			
 			String rowData = collectNewEntryData(fieldsArray);
-			//System.out.println(rowData);
 
 			handler.addNewEntry(rowData.toString());
 			UserTableOperations.userOption = JOptionPane.showConfirmDialog(null,"Do you want to insert a new row?","Data saving",JOptionPane.YES_NO_CANCEL_OPTION);

@@ -4,11 +4,10 @@ import com.razvan.gui.ErrorDisplayManager;
 import com.razvan.installation_manager.ApplicationInstallManager;
 
 public class IOFileManager {
-//	private String appDataPath = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault/userData/";
 	private String appDataPath = ApplicationInstallManager.APP_MAIN_FOLDER_PATH + "/userData";
 	
 
-	//NEW METHODS FOR READING/WRITING ENCRYPTION/DECRYPTION DATA
+	//Method used for writing the information that will later be used for decrypting the user data
 	public void writeDataForDecryption(File fileToWrite, byte[] inputData) {
 		StringBuilder sb = new StringBuilder();
 		
@@ -32,6 +31,7 @@ public class IOFileManager {
 	}
 	
 	
+	//Method for reading the information that will be used for decrypting the user data
 	public String readDataForDecryption(File fileToRead) {
 		String fileData = null;
 		
@@ -49,6 +49,7 @@ public class IOFileManager {
 		return fileData;
 	}
 	
+	//Method for writing encrypted data to a specified file
 	public void writeEncryptedData(File fileToWrite, byte[] inputData) {
 		
 		try (FileOutputStream outStream = new FileOutputStream(fileToWrite)) {
@@ -60,6 +61,7 @@ public class IOFileManager {
 		}
 	}
 	
+	//Method for reading encrypted data from a specified file
 	public byte[] readEncryptedData(File fileToRead) {
 		byte[] fileData = null;
 		
@@ -114,9 +116,6 @@ public class IOFileManager {
 		}
 	
 		
-		
-		
-	
 	public void writeLoggingData(File file, String data) {
 		
 		try (BufferedWriter bWriter = new BufferedWriter(new FileWriter(file))) {

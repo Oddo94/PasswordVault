@@ -28,7 +28,6 @@ public class RegisterActionListener implements ActionListener {
 	private JTextField emailAddressField;
 
 	//The application main folder path 
-	//private String appDataPath = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault";
 	private String appDataPath;
 	private PasswordEncryptionManager pem;
 	private UserDataSecurityManager securityManager;
@@ -55,18 +54,14 @@ public class RegisterActionListener implements ActionListener {
 		if (!hasPassedInputChecks()) {
 			return;
 		}
-		
-		//JOptionPane.showMessageDialog(null,  "All checks were successfully passed!", "Register test message", JOptionPane.INFORMATION_MESSAGE );
-		
+			
 		int userCreationOption = JOptionPane.showConfirmDialog(null, "Are you sure that you want to create a new user based on the provided data?", "Register", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-		//System.out.println("USER OPTION: " + userCreationOption);
 		//Checks if the user selected the "No" option or if he closed the confirmation dialog
 		if (userCreationOption == 1 || userCreationOption == -1) {
 			return;
 		}
-			
-	    //JOptionPane.showMessageDialog(null,  "The user confirmed the creation option", "Register test message", JOptionPane.INFORMATION_MESSAGE);
+
 		String userName = userNameField.getText();
 		char[] password = passwordField.getPassword();
 		String emailAddress = emailAddressField.getText();
@@ -172,7 +167,7 @@ public class RegisterActionListener implements ActionListener {
 			securityManager.storeSecretKey(securityManager.createAESKey(), userName);
 		}
 		
-		
+		//Method that formats the new user data by adding the ";" separator between the array elements 
 		private String formatNewUserData(String[] data) {
 			Objects.requireNonNull(data, "The data provided for formatting cannot be null");
 			
@@ -183,7 +178,7 @@ public class RegisterActionListener implements ActionListener {
 					continue;
 				}
 				
-				formattedData.append(data[i] + "\n");	
+				formattedData.append(data[i]);	
 			}
 			
 			return formattedData.toString();

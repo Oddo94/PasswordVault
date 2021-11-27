@@ -47,7 +47,7 @@ public class GUIInputChecker {
 		Pattern pattern = Pattern.compile(regexPattern);
 		Matcher matcher = pattern.matcher(userName);
 
-		return matcher.matches() ? true : false;
+		return matcher.matches();
 	}
 
 
@@ -68,9 +68,7 @@ public class GUIInputChecker {
 		if (passwordString.length() < passwordLength) {
 			return false;
 		}
-		//Modify the regex so that it checks if all the required characters are present in the password at the same time!!!
-		//		Pattern pattern = Pattern.compile("[\\w,.\\/<>?;'\\\\:\\|\\[\\]\\{\\}`~!@#\\$%\\^&\\*\\(\\)\\+=]{10,20}");
-
+	
 		boolean isValid = true;
 		for (String regexPattern : regexPatterns) {
 			Pattern pattern = Pattern.compile(regexPattern);
