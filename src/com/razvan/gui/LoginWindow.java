@@ -81,6 +81,8 @@ public class LoginWindow extends JFrame {
 		setTitle("Login");
 		add(authenticationPanel);
 		setVisible(true);
+		
+		checkSenderAccountCredentialsExistence();
 
 
 	}
@@ -337,9 +339,16 @@ public class LoginWindow extends JFrame {
 		return true;
 	}
 
-
-
-
-
-
+	private void checkSenderAccountCredentialsExistence() {
+		if (!MiscellaneousChecker.hasDataInsideSenderAccountCredentialsFile()) {
+			String fileLocation = ApplicationInstallManager.APP_MAIN_FOLDER_PATH + "/passwordReset/sender_account_credentials.xml";
+			
+			JCheckBox dontShowAgainCheckbox = new JCheckBox("Don't show this message again");
+			String message = String.format("No data was found inside the sender account credentials file located at:\n%s\nWould you like to set them up now?", fileLocation);
+			Object[] components = new Object[] {message, dontShowAgainCheckbox};
+			JOptionPane.showConfirmDialog(this, components, "Sender account credentials file info", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+		
+			//SenderAccountCredentialsDialog accountCredentialsDialog = new SenderAccountCredentialsDialog(); 
+		}
+	}
 }

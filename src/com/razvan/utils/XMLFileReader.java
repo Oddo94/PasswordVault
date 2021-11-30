@@ -100,4 +100,6 @@ public class XMLFileReader {
 
 		return "xml".equalsIgnoreCase(processedExtension);
 	}
+	
+
 }
