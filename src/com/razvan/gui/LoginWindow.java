@@ -80,8 +80,9 @@ public class LoginWindow extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Login");
 		add(authenticationPanel);
+		this.getRootPane().setDefaultButton(loginButton);
 		setVisible(true);
-		
+
 		checkSenderAccountCredentialsExistence();
 
 
@@ -172,39 +173,39 @@ public class LoginWindow extends JFrame {
 	}
 
 	private void addActionListenerToButtons() {
-//		resetPasswordButton.addActionListener(actionEvent -> {
-//
-//			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-//
-//			System.out.printf("Selected user option %d\n", userOption);
-//
-//			if(userOption == 0) {
-//				//Password reset data check
-//				if (checkPasswordResetInputData() == -1) {
-//					return;
-//				}
-//				
-//				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
-//
-//			
-//			    int confirmationEmailSendingResult = resetManager.resetPassword();
-//
-//				if (confirmationEmailSendingResult == 0) {
-//					JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-//				} else {
-//					JOptionPane.showMessageDialog(this , "Unable to send the confirmation email to the specified user address", "Password reset", JOptionPane.ERROR);
-//					return;
-//				}
-//
-//
-//				String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-//
-//				System.out.println("You entered the value " + userInput + "\n");
-//
-//			}
-//
-//		});
-		
+		//		resetPasswordButton.addActionListener(actionEvent -> {
+		//
+		//			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		//
+		//			System.out.printf("Selected user option %d\n", userOption);
+		//
+		//			if(userOption == 0) {
+		//				//Password reset data check
+		//				if (checkPasswordResetInputData() == -1) {
+		//					return;
+		//				}
+		//				
+		//				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
+		//
+		//			
+		//			    int confirmationEmailSendingResult = resetManager.resetPassword();
+		//
+		//				if (confirmationEmailSendingResult == 0) {
+		//					JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+		//				} else {
+		//					JOptionPane.showMessageDialog(this , "Unable to send the confirmation email to the specified user address", "Password reset", JOptionPane.ERROR);
+		//					return;
+		//				}
+		//
+		//
+		//				String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
+		//
+		//				System.out.println("You entered the value " + userInput + "\n");
+		//
+		//			}
+		//
+		//		});
+
 		resetPasswordButton.addActionListener(new PasswordResetActionListener(this));
 
 		loginButton.addActionListener(actionEvent -> {
@@ -249,47 +250,47 @@ public class LoginWindow extends JFrame {
 		});
 
 		registerButton.addActionListener(actionEvent ->  {
-			 this.setVisible(false);
-			 
-			 new RegisterWindow();
-			
+			this.setVisible(false);
+
+			new RegisterWindow();
+
 		});
 
 	}
-	
-	
+
+
 	private int checkPasswordResetInputData() {
 		String userName = userNameField.getText();
 		ArrayList<JTextComponent> fieldList = new ArrayList<>(List.of(userNameField, newPasswordField, confirmPasswordField));
 		PasswordEncryptionManager pem = new PasswordEncryptionManager();
-		
+
 		if (!hasDataOnRequiredFields(fieldList)) {
 			JOptionPane.showMessageDialog(this, "Please fill in the username, new password and confirm password fields!" );
 			return -1;
 		}
-		
+
 		if (!pem.userExists(userName)) {
 			JOptionPane.showMessageDialog(this, "The requested user does not exist! Please try again.");
 			return -1;
 		}
-		
+
 		if (!AuthenticationDataChecker.checkPasswordStrength(newPasswordField.getPassword())) {			
 			JOptionPane.showMessageDialog(this, "The chosen password is not strong enough! "
-			+ "Your password should: \n 1. be at least 10 characters long \n 2. contain lowercase and uppercase letters(a-zA-Z), special characters(!@#*/) and digits(0-9)");
-			
+					+ "Your password should: \n 1. be at least 10 characters long \n 2. contain lowercase and uppercase letters(a-zA-Z), special characters(!@#*/) and digits(0-9)");
+
 			return -1;
 		}
-		
-		
+
+
 		boolean passwordsMatch = Arrays.equals(newPasswordField.getPassword(), confirmPasswordField.getPassword());
-		
+
 		if (!passwordsMatch) {
 			JOptionPane.showMessageDialog(this, "The new password does not match the confirmation password!");
 			return -1;
 		}
-		
+
 		return 0;
-		
+
 	}
 
 	//Checks if all the credentials are provided by the user before the login
@@ -329,26 +330,31 @@ public class LoginWindow extends JFrame {
 		if (fieldList == null || fieldList.size() == 0) {
 			return false;
 		}
-		
+
 		for (JTextComponent field : fieldList) {
 			if ("".equals(field.getText()) || field.getText().matches("\\s+")) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
+	//Method for checking if the sender_account_credentials file contains(at application startup)
 	private void checkSenderAccountCredentialsExistence() {
 		if (!MiscellaneousChecker.hasDataInsideSenderAccountCredentialsFile()) {
 			String fileLocation = ApplicationInstallManager.APP_MAIN_FOLDER_PATH + "/passwordReset/sender_account_credentials.xml";
-			
-			JCheckBox dontShowAgainCheckbox = new JCheckBox("Don't show this message again");
+
+			//Creates custom message dialog which contains the message displayed to the user and a check box which will allow him to avoid the future display of the dialog 
+			JCheckBox dontShowAgainCheckbox = new JCheckBox("Don't show this message again");//TO BE IMPLEMENTED-needs action listener and a way to persist the user option
 			String message = String.format("No data was found inside the sender account credentials file located at:\n%s\nWould you like to set them up now?", fileLocation);
 			Object[] components = new Object[] {message, dontShowAgainCheckbox};
-			JOptionPane.showConfirmDialog(this, components, "Sender account credentials file info", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-		
-			//SenderAccountCredentialsDialog accountCredentialsDialog = new SenderAccountCredentialsDialog(); 
+			int userOption = JOptionPane.showConfirmDialog(this, components, "Sender account credentials file info", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+			if (userOption == 0) {
+
+				new SenderAccountCredentialsWindow();
+			}
 		}
 	}
 }

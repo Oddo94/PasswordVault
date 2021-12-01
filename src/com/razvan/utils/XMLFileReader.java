@@ -3,6 +3,7 @@ package com.razvan.utils;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.*;
@@ -67,7 +68,7 @@ public class XMLFileReader {
 		SenderAccountCredentials accountCredentials = new SenderAccountCredentials();
 		accountCredentials.setAccountAddress("Add email address here");
 		accountCredentials.setAccountPassword("Add email password here");
-	
+
 		JAXBContext jaxbContext = JAXBContext.newInstance(SenderAccountCredentials.class);		
 
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -79,6 +80,25 @@ public class XMLFileReader {
 
 		System.out.println("XML file successfuly created!");
 
+	}
+
+	public void createCustomXMLCredentialsFile(String accountAddress, char[] accountPassword) throws Exception {
+		Objects.requireNonNull(accountAddress, "The username provided for writing into the XML file cannot be null");
+		Objects.requireNonNull(accountPassword, "The password provided for writing into the XML file canot be null");
+
+		String processedPassword = new String(accountPassword);
+
+		SenderAccountCredentials accountCredentials = new SenderAccountCredentials();
+		accountCredentials.setAccountAddress(accountAddress);
+		accountCredentials.setAccountPassword(processedPassword);
+
+		JAXBContext jaxbContext = JAXBContext.newInstance(SenderAccountCredentials.class);
+
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+		jaxbMarshaller.marshal(accountCredentials, xmlFile);
+		jaxbMarshaller.marshal(accountCredentials, System.out);
 	}
 
 	//Validation method used to check if the provided file is of xml type
@@ -100,6 +120,6 @@ public class XMLFileReader {
 
 		return "xml".equalsIgnoreCase(processedExtension);
 	}
-	
+
 
 }
