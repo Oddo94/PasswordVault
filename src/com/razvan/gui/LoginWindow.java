@@ -173,39 +173,7 @@ public class LoginWindow extends JFrame {
 	}
 
 	private void addActionListenerToButtons() {
-		//		resetPasswordButton.addActionListener(actionEvent -> {
-		//
-		//			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to reset your password?", "Password reset", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-		//
-		//			System.out.printf("Selected user option %d\n", userOption);
-		//
-		//			if(userOption == 0) {
-		//				//Password reset data check
-		//				if (checkPasswordResetInputData() == -1) {
-		//					return;
-		//				}
-		//				
-		//				PasswordResetManager resetManager = new PasswordResetManager(userNameField.getText(), newPasswordField.getPassword(), new PasswordEncryptionManager());
-		//
-		//			
-		//			    int confirmationEmailSendingResult = resetManager.resetPassword();
-		//
-		//				if (confirmationEmailSendingResult == 0) {
-		//					JOptionPane.showMessageDialog(this , "An email containing the password reset instructions was sent to your email address.", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-		//				} else {
-		//					JOptionPane.showMessageDialog(this , "Unable to send the confirmation email to the specified user address", "Password reset", JOptionPane.ERROR);
-		//					return;
-		//				}
-		//
-		//
-		//				String userInput = JOptionPane.showInputDialog(this, "Please enter the confirmation code received on your email address: ", "Password reset", JOptionPane.INFORMATION_MESSAGE);
-		//
-		//				System.out.println("You entered the value " + userInput + "\n");
-		//
-		//			}
-		//
-		//		});
-
+	
 		resetPasswordButton.addActionListener(new PasswordResetActionListener(this));
 
 		loginButton.addActionListener(actionEvent -> {
@@ -215,9 +183,6 @@ public class LoginWindow extends JFrame {
 			}
 
 			String userName = userNameField.getText();
-			//		REMINDER!!
-			//		Change to getPasswordMethod() and send the password as a byte[] array to LoginCredentialsChecker constructor
-			//		and from there to the PasswordEncryptionManager constructor so that the password is never sent as String through different parts of the application
 			char[] password = passwordField.getPassword();
 
 			LoginCredentialsChecker loginCredentialsChecker = new LoginCredentialsChecker(userName, password);		
@@ -237,11 +202,6 @@ public class LoginWindow extends JFrame {
 			this.setVisible(false);
 			this.dispose();
 			new UserDashboard(userName, userHasData);
-
-			//		setMainWindow(userNameField.getText(), userHasData);
-			//		resetAllFields();
-			//		this.setVisible(false);
-			//		parentWindow.setVisible(true);
 
 		});
 

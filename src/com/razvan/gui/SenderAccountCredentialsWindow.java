@@ -38,7 +38,6 @@ public class SenderAccountCredentialsWindow extends JDialog {
 	private	JPanel mainPanel;
 
 	//The application main folder path 
-	//private String appDataPath = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault";
 	private String appDataPath = ApplicationInstallManager.APP_MAIN_FOLDER_PATH;
 
 	//Array containing the text fields present in the window 
@@ -174,7 +173,14 @@ public class SenderAccountCredentialsWindow extends JDialog {
 				JOptionPane.showMessageDialog(this,  "Invalid email! Please try again.", "Sender account credentials form", JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
+			
+			int userOption = JOptionPane.showConfirmDialog(this, "Are you sure that you want to save the provided data?", "Sender account credentials form", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
+			//Checks to see if the user selected other option than "Yes"
+			if (userOption != 0) {
+				return;
+			}
+			
 			//Saves data to the file and shows the appropriate message to the user according to the method execution result(0-success, -1-failure)
 			if (saveData(accountAddress, accountPassword) == 0) {
 				JOptionPane.showMessageDialog(this,  "Data successfully saved!", "Sender account credentials form", JOptionPane.INFORMATION_MESSAGE);			
