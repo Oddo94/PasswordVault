@@ -4,11 +4,14 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.jdatepicker.JDatePicker;
+
 //import com.razvan.gui.UserDashboard.PasswordDialog;
 //import datechooser.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 public class WindowBuilder extends MouseAdapter {
 	private UserDashboard userDashboard;
 	private UserTableOperations handler;
@@ -34,17 +37,25 @@ public class WindowBuilder extends MouseAdapter {
 	private JButton resetFormButton = new JButton("Reset");
 	
 	
+	private JDatePicker datePicker = new JDatePicker();
+
+	
+	
 	
 	public WindowBuilder(UserDashboard userDashboard, UserTableOperations handler) {
 		this.userDashboard = userDashboard;
 		this.handler = handler;
 		//this.passwordDialog = passwordDialog;
+		datePicker.setMaximumSize(new Dimension(150, 25));
+		accountNameField.setMaximumSize(new Dimension(300, 25));
+		userNameField.setMaximumSize(new Dimension(300, 25));
+		passwordField.setMaximumSize(new Dimension(300, 25));
 	}
 	
 	public void createNewEntryForm() {
 		//Creating field and field name arrays for further processing
-		JTextField[] fieldsArray = {accountNameField, userNameField, passwordField, lastChangeDateField};
-		String[] fieldNames = {"Account field", "User field", "Password field", "Date field"};
+		JTextField[] fieldsArray = {accountNameField, userNameField, passwordField};
+		String[] fieldNames = {"Account field", "User field", "Password field"};
 		
 		//Setting field names for further checks regarding the state of each field(empty or not)
 		setNamesToInputFields(fieldsArray, fieldNames);
@@ -71,7 +82,8 @@ public class WindowBuilder extends MouseAdapter {
 		//Adding the components horizontally, one after the other into two groups
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameLabel).addComponent(userNameLabel).addComponent(passwordLabel).addComponent(lastChangeDateLabel).addComponent(resetFormButton));
-		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(lastChangeDateField).addComponent(addNewEntryButton));
+//		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(lastChangeDateField).addComponent(addNewEntryButton));
+		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(datePicker).addComponent(addNewEntryButton));
 		layout.setHorizontalGroup(hGroup);
 		
 		//Setting vertical alignment of the form components
@@ -83,7 +95,8 @@ public class WindowBuilder extends MouseAdapter {
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
 				addComponent(passwordLabel).addComponent(passwordField));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-				addComponent(lastChangeDateLabel).addComponent(lastChangeDateField));
+//				addComponent(lastChangeDateLabel).addComponent(lastChangeDateField));
+				addComponent(lastChangeDateLabel).addComponent(datePicker));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(resetFormButton).addComponent(addNewEntryButton));
 	    layout.setVerticalGroup(vGroup);
 	}
@@ -157,6 +170,13 @@ public class WindowBuilder extends MouseAdapter {
     		} 
 
     		rowData.append(fieldsArray[i].getText() + ",");
+    	}
+    	
+    	LocalDate inputDate = LocalDate.of(datePicker.getModel().getYear(), datePicker.getModel().getMonth(), datePicker.getModel().getDay());
+    	if ("".equals(inputDate.toString())) {
+    		rowData.append("null");
+    	} else {
+    		rowData.append("," + inputDate.toString());
     	}
 
     	return rowData.toString();
