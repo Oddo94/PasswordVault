@@ -93,6 +93,8 @@ public class UserTableOperations extends MouseAdapter {
 		DefaultTableModel tableModel = new DefaultTableModel(numRows,numColumns);
 		tableModel.setColumnIdentifiers(columnNames);
 		userDataTable.setModel(tableModel);
+		//Enables the sorting option on the columns of the table
+		userDataTable.setAutoCreateRowSorter(true);
 
 		for(int i = 0; i < userDataTable.getColumnCount(); i++) {
 

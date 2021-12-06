@@ -20,7 +20,6 @@ public class PasswordVault {
 					ApplicationInstallManager.createKeyStoreFile();
 				}
 
-				//new UserDashboard();
 				new LoginWindow();
 
 			}
