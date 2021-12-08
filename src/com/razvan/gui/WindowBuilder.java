@@ -1,25 +1,18 @@
 package com.razvan.gui;
+
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
-import org.jdatepicker.DateModel;
-import org.jdatepicker.JDatePicker;
-
-//import com.razvan.gui.UserDashboard.PasswordDialog;
-//import datechooser.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.Date;
+
+import com.toedter.calendar.JDateChooser;
+
 public class WindowBuilder extends MouseAdapter {
 	private UserDashboard userDashboard;
 	private UserTableOperations handler;
-	//private PasswordDialog passwordDialog;
 	private JPanel parentPanel = new JPanel(new BorderLayout());
 	//Creating the entry form panel
 	private JPanel newEntryForm = new JPanel();
@@ -40,8 +33,7 @@ public class WindowBuilder extends MouseAdapter {
 	private JButton addNewEntryButton = new JButton("Add entry");
 	private JButton resetFormButton = new JButton("Reset");
 
-
-	private JDatePicker datePicker = new JDatePicker();
+	private JDateChooser datePicker = new JDateChooser();
 
 
 
@@ -49,7 +41,11 @@ public class WindowBuilder extends MouseAdapter {
 	public WindowBuilder(UserDashboard userDashboard, UserTableOperations handler) {
 		this.userDashboard = userDashboard;
 		this.handler = handler;
-		//this.passwordDialog = passwordDialog;
+
+		//Sets the default date of the JDateChooser
+		datePicker.setDate(new Date());
+		//Sets the JDateChooser date format
+		datePicker.setDateFormatString("dd-MM-yyyy");
 
 		datePicker.setMaximumSize(new Dimension(150, 25));
 		accountNameField.setMaximumSize(new Dimension(300, 25));
@@ -87,7 +83,6 @@ public class WindowBuilder extends MouseAdapter {
 		//Adding the components horizontally, one after the other into two groups
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameLabel).addComponent(userNameLabel).addComponent(passwordLabel).addComponent(lastChangeDateLabel).addComponent(resetFormButton));
-		//		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(lastChangeDateField).addComponent(addNewEntryButton));
 		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(datePicker).addComponent(addNewEntryButton));
 		layout.setHorizontalGroup(hGroup);
 
@@ -100,7 +95,6 @@ public class WindowBuilder extends MouseAdapter {
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
 				addComponent(passwordLabel).addComponent(passwordField));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-				//				addComponent(lastChangeDateLabel).addComponent(lastChangeDateField));
 				addComponent(lastChangeDateLabel).addComponent(datePicker));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(resetFormButton).addComponent(addNewEntryButton));
 		layout.setVerticalGroup(vGroup);
@@ -160,46 +154,26 @@ public class WindowBuilder extends MouseAdapter {
 	private String collectNewEntryData(JComponent[] fieldsArray ) {
 		StringBuilder rowData = new StringBuilder();
 
-		//    	int length = fieldsArray.length;
-		//    	for (int i = 0; i < length; i++) {
-		//    		if(i == length - 1) {
-		//    			/*If the data field is left empty by the user, the corresponding data cell from the table will
-		//    			 be filled with a string having the default value "null"  */
-		//    			if ("".equals(fieldsArray[length - 1].getText())) {
-		//    				rowData.append("null");
-		//    				break;
-		//    			} else {
-		//    				rowData.append(fieldsArray[i].getText());
-		//    				break;
-		//    			}
-		//    		} 
-		//
-		//    		rowData.append(fieldsArray[i].getText() + ",");
-		//    	}
-		//    	
-		//    	LocalDate inputDate = LocalDate.of(datePicker.getModel().getYear(), datePicker.getModel().getMonth(), datePicker.getModel().getDay());
-		//    	if ("".equals(inputDate.toString())) {
-		//    		rowData.append("null");
-		//    	} else {
-		//    		rowData.append("," + inputDate.toString());
-		//    	}
-
+		//The objects are casted because the fieldsArray is of type JComponent and its components need to be treated differently according to their specific type
 		for (int i = 0; i < fieldsArray.length; i++) {
 			String fieldContent = "";
 			if (fieldsArray[i].getClass() == JTextField.class) {
 				fieldContent = ((JTextField) fieldsArray[i]).getText();
 
-			} else if (fieldsArray[i].getClass() == JDatePicker.class) {
-				DateModel dateModel = datePicker.getModel();
-				int year = dateModel.getYear();
-				int month = dateModel.getMonth();
-				int day = dateModel.getDay();
+			} else if (fieldsArray[i].getClass() == JDateChooser.class) {
+				//The following format code is necessary in order to display the date retrieved from the JDateChooser in the correct format when it is inserted in the JTable(e.g. 08-12-2021)
+				//Gets the selected date
+				Date selectedDate = datePicker.getDate();
+				//Creates the format object
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+				//Formats the date from the JDateChooser and creates a new String object having this format
+				String formattedDate = sdf.format(selectedDate);
 
-				LocalDate inputDate = LocalDate.of(year, month, day);
-				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-				fieldContent = dtf.format(inputDate);
+				//The value is assigned to the fieldContent variable
+				fieldContent = formattedDate.toString();
 			}
 
+			//The separator "," is added only if the processing has not reached the last object of the array
 			if (i != fieldsArray.length - 1) {
 				if ("".equals(fieldContent)) {
 					rowData.append("null" + ",");
@@ -228,14 +202,15 @@ public class WindowBuilder extends MouseAdapter {
 
 		//Adding action listener to the reset button of the entry form
 		resetFormButton.addActionListener(actionEvent -> {
+			//The casting is necessary for the reasons provided in the collectNewEntryData method
 			for (JComponent currentField : fieldsArray) {
 				if (currentField.getClass() == JTextField.class) {
 					((JTextField) currentField).setText("");
 
-				} else if (currentField.getClass() == JDatePicker.class) {
-					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-					LocalDate currentDate = LocalDate.now();
-					((JDatePicker) currentField).getModel().setDate(currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth());
+				} else if (currentField.getClass() == JDateChooser.class) {
+					//Sets the date of the JDateChooser as the current date when the control is reset
+					Date currentDate = new Date();
+					((JDateChooser) currentField).setDate(currentDate);
 				}
 			}
 		});
@@ -262,15 +237,4 @@ public class WindowBuilder extends MouseAdapter {
 			}
 		});
 	}
-
-
-
-
-
-
-
-
-
-
-
 }
