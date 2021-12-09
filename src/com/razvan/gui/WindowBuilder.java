@@ -27,13 +27,12 @@ public class WindowBuilder extends MouseAdapter {
 	private JTextField accountNameField = new JTextField();
 	private JTextField userNameField = new JTextField();
 	private JTextField passwordField = new JTextField(15);
-	private JTextField lastChangeDateField = new JTextField(15);
 
 	//Form buttons
 	private JButton addNewEntryButton = new JButton("Add entry");
 	private JButton resetFormButton = new JButton("Reset");
 
-	private JDateChooser datePicker = new JDateChooser();
+	private JDateChooser dateChooser = new JDateChooser();
 
 
 
@@ -43,11 +42,13 @@ public class WindowBuilder extends MouseAdapter {
 		this.handler = handler;
 
 		//Sets the default date of the JDateChooser
-		datePicker.setDate(new Date());
+		dateChooser.setDate(new Date());
 		//Sets the JDateChooser date format
-		datePicker.setDateFormatString("dd-MM-yyyy");
-
-		datePicker.setMaximumSize(new Dimension(150, 25));
+		dateChooser.setDateFormatString("dd-MM-yyyy");
+		//Sets the JDateChooser size
+		dateChooser.setMaximumSize(new Dimension(150, 25));
+		
+		//Sets size for the rest of the form input fields
 		accountNameField.setMaximumSize(new Dimension(300, 25));
 		userNameField.setMaximumSize(new Dimension(300, 25));
 		passwordField.setMaximumSize(new Dimension(300, 25));
@@ -55,7 +56,7 @@ public class WindowBuilder extends MouseAdapter {
 
 	public void createNewEntryForm() {
 		//Creating field and field name arrays for further processing
-		JComponent[] fieldsArray = {accountNameField, userNameField, passwordField, datePicker};
+		JComponent[] fieldsArray = {accountNameField, userNameField, passwordField, dateChooser};
 		String[] fieldNames = {"Account field", "User field", "Password field"};
 
 		//Setting field names for further checks regarding the state of each field(empty or not)
@@ -83,7 +84,7 @@ public class WindowBuilder extends MouseAdapter {
 		//Adding the components horizontally, one after the other into two groups
 		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameLabel).addComponent(userNameLabel).addComponent(passwordLabel).addComponent(lastChangeDateLabel).addComponent(resetFormButton));
-		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(datePicker).addComponent(addNewEntryButton));
+		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(dateChooser).addComponent(addNewEntryButton));
 		layout.setHorizontalGroup(hGroup);
 
 		//Setting vertical alignment of the form components
@@ -95,7 +96,7 @@ public class WindowBuilder extends MouseAdapter {
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
 				addComponent(passwordLabel).addComponent(passwordField));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-				addComponent(lastChangeDateLabel).addComponent(datePicker));
+				addComponent(lastChangeDateLabel).addComponent(dateChooser));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(resetFormButton).addComponent(addNewEntryButton));
 		layout.setVerticalGroup(vGroup);
 	}
@@ -163,7 +164,7 @@ public class WindowBuilder extends MouseAdapter {
 			} else if (fieldsArray[i].getClass() == JDateChooser.class) {
 				//The following format code is necessary in order to display the date retrieved from the JDateChooser in the correct format when it is inserted in the JTable(e.g. 08-12-2021)
 				//Gets the selected date
-				Date selectedDate = datePicker.getDate();
+				Date selectedDate = dateChooser.getDate();
 				//Creates the format object
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 				//Formats the date from the JDateChooser and creates a new String object having this format
