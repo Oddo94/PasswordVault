@@ -1,13 +1,18 @@
 package com.razvan.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.swing.JComponent;
+import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
+
+import com.toedter.calendar.JDateChooser;
 
 public class GUIInputChecker {
 
@@ -37,7 +42,7 @@ public class GUIInputChecker {
 			field.setText("");
 		}
 	}
-
+	
 	//Username check method(the username cannot start with _ , it can contain(a-z, A-Z, 0-9, _) and must have between 3 and 10 characters)
 	public static boolean checkUsername(String userName, String regexPattern) {
 		Objects.requireNonNull(userName, "The user name that has to be validated cannot be null");

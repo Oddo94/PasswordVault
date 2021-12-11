@@ -48,6 +48,8 @@ public class WindowBuilder extends MouseAdapter {
 		//Sets the JDateChooser size
 		dateChooser.setMaximumSize(new Dimension(150, 25));
 		
+		dateChooser.getDateEditor().setEnabled(false);
+		
 		//Sets size for the rest of the form input fields
 		accountNameField.setMaximumSize(new Dimension(300, 25));
 		userNameField.setMaximumSize(new Dimension(300, 25));
