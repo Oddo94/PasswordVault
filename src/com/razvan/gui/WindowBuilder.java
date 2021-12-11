@@ -237,7 +237,9 @@ public class WindowBuilder extends MouseAdapter {
 			UserTableOperations.userOption = JOptionPane.showConfirmDialog(null,"Do you want to insert a new row?","Data saving",JOptionPane.YES_NO_CANCEL_OPTION);
 			if( UserTableOperations.userOption == 0) {
 				handler.getUserDataTableModel().addRow(rowData.toString().split(","));
+				
 			}
 		});
 	}
+	
 }

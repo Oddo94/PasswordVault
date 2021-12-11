@@ -1,5 +1,8 @@
 package com.razvan.utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -102,6 +105,23 @@ public class GUIInputChecker {
 		}
 		
 		return true;
+	}
+	
+	//Method for checking the date validity based on its content and the provided format
+	public static boolean isValidDate(String date, String format) {
+		//Null checks
+		Objects.requireNonNull(date,"The date string provided for validation cannot be null");
+		Objects.requireNonNull(format, "The format string provided for validation cannot be null");
+		
+		//The method will try to parse the provided date with the specified format and if any of the two elements (date and format) are incorrect it will return false
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+			LocalDate inputDate = LocalDate.parse(date, formatter);
+			return true;
+			
+		} catch (DateTimeParseException ex) {
+			return false;
+		}
 	}
 
 

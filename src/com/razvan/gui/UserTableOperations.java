@@ -18,6 +18,7 @@ import javax.swing.table.TableColumn;
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.io_manager.IOFileManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
+import com.razvan.utils.GUIInputChecker;
 
 import java.util.*;
 
@@ -282,6 +283,18 @@ public class UserTableOperations extends MouseAdapter {
 
 					userOption = JOptionPane.showConfirmDialog(null,"Do you want to save the changes?","Data saving",JOptionPane.YES_NO_OPTION);
 
+					//Checks if the modified date is correct(from the value perspective) and has the right format after the user has changed it
+					String modifiedDate =(String) dtm.getValueAt(e.getFirstRow(), e.getColumn());
+					if(!GUIInputChecker.isValidDate(modifiedDate, "dd-MM-yyyy")) {
+						JOptionPane.showMessageDialog(userDashboard, "Invalid date and/or format! The date must have the format 'dd-mm-yyyy'.", "User dashboard", JOptionPane.WARNING_MESSAGE);
+						//Sets the flag to true as the change will not be saved due to the incorrect date format
+						hasCanceledChange = true;
+						//Sets the cell content to its old value since the user provided data is incorrect
+						dtm.setValueAt(oldCellValue, e.getFirstRow(), e.getColumn());
+						return;
+					}
+					
+					
 					if (userOption == 0) {
 						editEntry();
 					} else {
