@@ -123,6 +123,31 @@ public class GUIInputChecker {
 			return false;
 		}
 	}
+	
+
+	public static boolean isExpiredPassword(String passwordDate, String passwordDateFormat, int daysSinceCreationLimit) throws Exception {
+		Objects.requireNonNull(passwordDate, "The string date provided for validation cannot be null.");
+		Objects.requireNonNull(passwordDateFormat, "The string date format provided for validation cannot be null.");
+		//Date value and format validation here
+		if(!isValidDate(passwordDate, passwordDateFormat)) {
+			throw new IllegalArgumentException("Invalid date and/or format.");
+		}
+		
+		if (daysSinceCreationLimit <= 0) {
+			throw new IllegalArgumentException("The number of specified days for which the password is considered active must be positive.");
+		}
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(passwordDateFormat);
+		LocalDate passwordCreationDate = LocalDate.parse(passwordDate, formatter);
+		LocalDate currentDate = LocalDate.now();
+		LocalDate passwordExpirationDate = passwordCreationDate.plusDays(daysSinceCreationLimit);
+
+		if(passwordExpirationDate.isBefore(currentDate)) {
+			return true;
+		}
+		
+		return false;
+	}
 
 
 }

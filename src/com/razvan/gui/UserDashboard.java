@@ -46,13 +46,18 @@ public class UserDashboard extends JFrame {
 		UserTableOperations handler = new UserTableOperations(this, userName);
 		WindowBuilder builder = new WindowBuilder(this, handler);
 
+		JTable userDataTable = handler.createTable(0, 4);
 		/* If there is data to display, the table will be created and filled with the
 		 * respective data otherwise an empty table will be displayed
 		 */
 		if(hasData) {
-			handler.addTableToWindow(handler.fillTable(handler.createTable(0,4)));
+			handler.fillTable(userDataTable);
+			handler.addTableToWindow(userDataTable);
+			//handler.addTableToWindow(handler.fillTable(handler.createTable(0,4)));
+			
 		} else {
-			handler.addTableToWindow(handler.createTable(0,4));
+			handler.addTableToWindow(userDataTable);
+			//handler.addTableToWindow(handler.createTable(0,4));
 		}
 
 		handler.addMouseListenerToTable();
