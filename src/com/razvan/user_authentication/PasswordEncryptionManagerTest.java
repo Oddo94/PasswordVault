@@ -1,11 +1,11 @@
 package com.razvan.user_authentication;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
-import org.junit.jupiter.api.Test;
+//import static org.junit.jupiter.api.Assertions.*;
+//
+//import java.io.UnsupportedEncodingException;
+//import java.nio.charset.StandardCharsets;
+//
+//import org.junit.jupiter.api.Test;
 
 //Clasa de test pentru metodele de securizare a parolei
 class PasswordEncryptionManagerTest {

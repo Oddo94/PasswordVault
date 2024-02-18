@@ -66,17 +66,19 @@ public class UserDashboard extends JFrame {
 		setIconImage(new ImageIcon("resources/app_icon_64.png").getImage());
 		setResizable(false);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
-
-
 
 	private void setWindowTitle() {
 		JPanel dashboardTitlePanel = new JPanel();
 		JLabel dashboardTitleLabel = new JLabel("Account list");
 		dashboardTitlePanel.add(dashboardTitleLabel);
 		add(dashboardTitlePanel, BorderLayout.NORTH);
+	}
+
+	private void addWindowListener() {
+
 	}
 
 }
