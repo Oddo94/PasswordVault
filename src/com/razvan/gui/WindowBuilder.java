@@ -249,6 +249,38 @@ public class WindowBuilder extends MouseAdapter {
 				checkIfUserConfirmsExit();
 			}
 		});
+
+		userDashboard.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				checkIfUserConfirmsExit();
+			}
+		});
+	}
+
+	public void checkIfUserConfirmsExit() {
+		int confirmationResult = displayExitConfirmation(userDashboard);
+
+		if(confirmationResult == -1) {
+			userDashboard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		} else {
+			//Instructs the programs to exit when the users presses the 'X' button of the window (no other command is needed)
+			userDashboard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			//If the window close command is sent from another control (e.g. JMenuItem) System.exit(0) needs to be called explicitly to force the program termination
+			System.exit(0);
+		}
+	}
+
+
+	public int displayExitConfirmation(JFrame frame) {
+		int userExitOption = JOptionPane.showConfirmDialog(frame, "Are you sure that you want to exit?", "User dashboard", JOptionPane.YES_NO_OPTION);
+
+		if(userExitOption == 1) {
+			return -1;
+		}
+
+		return 0;
 	}
 
 	public void checkIfUserConfirmsExit() {
