@@ -1,21 +1,15 @@
 package com.razvan.utils;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.swing.text.JTextComponent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
-import com.toedter.calendar.JDateChooser;
 
 public class GUIInputChecker {
 

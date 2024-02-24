@@ -1,31 +1,7 @@
 package com.razvan.gui;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.*;
-import javax.swing.text.JTextComponent;
-
-import com.razvan.installation_manager.ApplicationInstallManager;
-import com.razvan.user_authentication.PasswordEncryptionManager;
-
-import java.io.*;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
+import java.awt.*;
 
 public class UserDashboard extends JFrame {
 	//private PasswordDialog passwordDialog;

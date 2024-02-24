@@ -1,32 +1,24 @@
 package com.razvan.gui;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.*;
-
-import javax.crypto.SecretKey;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.text.TableView.TableRow;
 
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.io_manager.IOFileManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
-import com.razvan.utils.CellHighlighterRenderer;
 import com.razvan.utils.GUIInputChecker;
 
-import java.util.*;
+import javax.crypto.SecretKey;
+import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Objects;
 
 
 

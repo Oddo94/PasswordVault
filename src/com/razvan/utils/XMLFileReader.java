@@ -1,21 +1,19 @@
 package com.razvan.utils;
 
-import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.xml.XMLConstants;
-import javax.xml.bind.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.razvan.gui.ErrorDisplayManager;
-import com.razvan.gui.ErrorDisplayManager.messageType;
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class XMLFileReader {
 	private File xmlFile;

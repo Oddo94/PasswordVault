@@ -1,22 +1,15 @@
 package com.razvan.user_authentication;
 
-import java.io.*;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import com.razvan.installation_manager.ApplicationInstallManager;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
-import com.razvan.installation_manager.ApplicationInstallManager;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Objects;
 
 public class PasswordEncryptionManager {
 	//The path to the file in which the user authentication data is stored
