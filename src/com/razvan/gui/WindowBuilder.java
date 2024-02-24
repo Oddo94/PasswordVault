@@ -49,9 +49,9 @@ public class WindowBuilder extends MouseAdapter {
 		dateChooser.setDateFormatString("dd-MM-yyyy");
 		//Sets the JDateChooser size
 		dateChooser.setMaximumSize(new Dimension(150, 25));
-		
+
 		dateChooser.getDateEditor().setEnabled(false);
-		
+
 		//Sets size for the rest of the form input fields
 		accountNameField.setMaximumSize(new Dimension(300, 25));
 		userNameField.setMaximumSize(new Dimension(300, 25));
@@ -75,7 +75,7 @@ public class WindowBuilder extends MouseAdapter {
 		userDashboard.add(parentPanel, BorderLayout.SOUTH);
 
 		//Adding action listeners
-		addActionListenersToFormButtons(fieldsArray);	
+		addActionListenersToFormButtons(fieldsArray);
 	}
 
 	private void setFormComponentsLayout(JPanel newEntryForm) {
@@ -151,7 +151,7 @@ public class WindowBuilder extends MouseAdapter {
 		int i = 0;
 		for (JComponent currentField : inputFields) {
 			currentField.setName(fieldNames[i++]);
-		}	
+		}
 
 	}
 
@@ -239,14 +239,7 @@ public class WindowBuilder extends MouseAdapter {
 			UserTableOperations.userOption = JOptionPane.showConfirmDialog(null,"Do you want to insert a new row?","Data saving",JOptionPane.YES_NO_CANCEL_OPTION);
 			if( UserTableOperations.userOption == 0) {
 				handler.getUserDataTableModel().addRow(rowData.toString().split(","));
-				
-			}
-		});
 
-		userDashboard.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				checkIfUserConfirmsExit();
 			}
 		});
 
@@ -270,42 +263,15 @@ public class WindowBuilder extends MouseAdapter {
 			//If the window close command is sent from another control (e.g. JMenuItem) System.exit(0) needs to be called explicitly to force the program termination
 			System.exit(0);
 		}
-	}
-
-
-	public int displayExitConfirmation(JFrame frame) {
-		int userExitOption = JOptionPane.showConfirmDialog(frame, "Are you sure that you want to exit?", "User dashboard", JOptionPane.YES_NO_OPTION);
-
-		if(userExitOption == 1) {
-			return -1;
-		}
-
-		return 0;
-	}
-
-	public void checkIfUserConfirmsExit() {
-		int confirmationResult = displayExitConfirmation(userDashboard);
-
-		if(confirmationResult == -1) {
-			userDashboard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		} else {
-			//Instructs the programs to exit when the users presses the 'X' button of the window (no other command is needed)
-			userDashboard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-			//If the window close command is sent from another control (e.g. JMenuItem) System.exit(0) needs to be called explicitly to force the program termination
-			System.exit(0);
-		}
-	}
-
-
-	public int displayExitConfirmation(JFrame frame) {
-		int userExitOption = JOptionPane.showConfirmDialog(frame, "Are you sure that you want to exit?", "User dashboard", JOptionPane.YES_NO_OPTION);
-
-		if(userExitOption == 1) {
-			return -1;
-		}
-
-		return 0;
 	}
 	
+	public int displayExitConfirmation(JFrame frame) {
+		int userExitOption = JOptionPane.showConfirmDialog(frame, "Are you sure that you want to exit?", "User dashboard", JOptionPane.YES_NO_OPTION);
+
+		if(userExitOption == 1) {
+			return -1;
+		}
+
+		return 0;
+	}
 }
