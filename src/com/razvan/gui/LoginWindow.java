@@ -1,26 +1,22 @@
 package com.razvan.gui;
 
-import java.awt.BorderLayout;
-
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.TrayIcon.MessageType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.*;
+import com.razvan.action_listener.PasswordResetActionListener;
+import com.razvan.installation_manager.ApplicationInstallManager;
+import com.razvan.user_authentication.LoginCredentialsChecker;
+import com.razvan.user_authentication.PasswordEncryptionManager;
+import com.razvan.utils.AuthenticationDataChecker;
+import com.razvan.utils.MiscellaneousChecker;
+import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
-
-import com.razvan.action_listener.PasswordResetActionListener;
-import com.razvan.installation_manager.ApplicationInstallManager;
-import com.razvan.user_authentication.*;
-import com.razvan.utils.*;
-
-import lombok.Getter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 public class LoginWindow extends JFrame {

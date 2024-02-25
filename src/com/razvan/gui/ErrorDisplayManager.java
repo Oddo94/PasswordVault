@@ -1,15 +1,9 @@
 package com.razvan.gui;
-import java.util.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.io.*;
-import java.io.IOException;
-import java.util.Arrays;
 
-//import javax.swing.JComponent;
-//import javax.swing.JFrame;
-//import javax.swing.JOptionPane;
 import javax.swing.*;
+import java.awt.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class ErrorDisplayManager {
 	

@@ -1,33 +1,19 @@
 package com.razvan.user_data_security;
 
+import com.razvan.gui.ErrorDisplayManager;
+import com.razvan.installation_manager.ApplicationInstallManager;
+import com.razvan.io_manager.IOFileManager;
+
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
+import java.security.*;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.KeyStore.SecretKeyEntry;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-
-import com.razvan.gui.ErrorDisplayManager;
-import com.razvan.installation_manager.ApplicationInstallManager;
-import com.razvan.io_manager.IOFileManager;
+import java.security.cert.CertificateException;
 
 public class UserDataSecurityManager {
 
