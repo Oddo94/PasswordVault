@@ -47,7 +47,7 @@ public class UserDashboard extends JFrame {
 		setIconImage(new ImageIcon("resources/app_icon_64.png").getImage());
 		setResizable(false);
 		setLocationRelativeTo(null);
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setVisible(true);
 	}
 

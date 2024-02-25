@@ -277,9 +277,10 @@ public class WindowBuilder extends MouseAdapter {
 
 	//Generic method for displaying confirmation pop-ups in the user dashboard window
 	public int displayConfirmationPopup(JFrame frame, String message) {
-		int userOption = JOptionPane.showConfirmDialog(frame, message, "User dashboard", JOptionPane.YES_NO_OPTION);
+		int userOption = JOptionPane.showConfirmDialog(frame, message, "User dashboard", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null);
 
-		if(userOption == 1) {
+		//When the user selects the 'No' option or closes the dialog from the 'X' button
+		if(userOption == 1 || userOption == -1) {
 			return -1;
 		}
 
