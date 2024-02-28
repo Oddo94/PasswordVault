@@ -23,7 +23,7 @@ public class WindowBuilder extends MouseAdapter {
 	private JLabel userNameLabel = new JLabel("User name");
 	private JLabel passwordLabel = new JLabel("Password");
 	private JLabel lastChangeDateLabel = new JLabel("Last change date");
-	private JLabel emptyLabel = new JLabel("Empty label");
+	private JLabel emptyLabel = new JLabel();
 
 	//Form input fields
 	private JTextField accountNameField = new JTextField();
@@ -86,42 +86,31 @@ public class WindowBuilder extends MouseAdapter {
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
-		//Adding the components horizontally, one after the other into two groups
-		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
-		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameLabel).addComponent(userNameLabel).addComponent(passwordLabel).addComponent(lastChangeDateLabel).addComponent(resetFormButton));
-		hGroup.addGroup(layout.createParallelGroup().addComponent(accountNameField).addComponent(userNameField).addComponent(passwordField).addComponent(dateChooser).addComponent(addNewEntryButton));
-		hGroup.addGroup(layout.createParallelGroup().addComponent(emptyLabel).addComponent(emptyLabel).addComponent(emptyLabel).addComponent(emptyLabel).addComponent(emptyLabel).addComponent(saveChangesButton));
+		//Adding the components horizontally, one after the other into three groups
+		GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup()
+						.addComponent(accountNameLabel)
+						.addComponent(userNameLabel)
+						.addComponent(passwordLabel)
+						.addComponent(lastChangeDateLabel)
+						.addComponent(resetFormButton))
+				.addGroup(layout.createParallelGroup()
+						.addComponent(accountNameField)
+						.addComponent(userNameField)
+						.addComponent(passwordField)
+						.addComponent(dateChooser)
+						.addComponent(addNewEntryButton))
+				.addGroup(layout.createParallelGroup()
+						.addComponent(emptyLabel)
+						.addComponent(emptyLabel)
+						.addComponent(emptyLabel)
+						.addComponent(emptyLabel)
+						.addComponent(emptyLabel)
+						.addComponent(saveChangesButton));
+
 		layout.setHorizontalGroup(hGroup);
 
-//		layout.setHorizontalGroup(
-//				layout.createParallelGroup()
-//								.addComponent(accountNameLabel)
-//								.addComponent(accountNameField)
-//								.addComponent(userNameLabel)
-//								.addComponent(userNameField)
-//								.addComponent(passwordLabel)
-//								.addComponent(passwordField)
-//								.addComponent(lastChangeDateLabel)
-//								.addComponent(dateChooser)
-//						.addGroup(layout.createSequentialGroup()
-//								.addComponent(resetFormButton)
-//								.addComponent(addNewEntryButton)
-//								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//								.addComponent(saveChangesButton)));
-
-		//Setting vertical alignment of the form components
-//		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
-//		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-//				addComponent(accountNameLabel).addComponent(accountNameField));
-//		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-//				addComponent(userNameLabel).addComponent(userNameField));
-//		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-//				addComponent(passwordLabel).addComponent(passwordField));
-//		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-//				addComponent(lastChangeDateLabel).addComponent(dateChooser));
-//		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(resetFormButton).addComponent(addNewEntryButton));
-//		layout.setVerticalGroup(vGroup);
-
+		//Setting the vertical alignment of the form components contained in those three groups
 		GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(accountNameLabel)
@@ -139,27 +128,10 @@ public class WindowBuilder extends MouseAdapter {
 						.addComponent(lastChangeDateLabel)
 						.addComponent(dateChooser)
 						.addComponent(emptyLabel))
-				.addGroup(layout.createParallelGroup()
+				.addGroup(layout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(resetFormButton)
 						.addComponent(addNewEntryButton)
-						//.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, 100)
 						.addComponent(saveChangesButton));
-
-//		layout.setVerticalGroup(
-//			layout.createParallelGroup()
-//								.addComponent(accountNameLabel)
-//								.addComponent(accountNameField)
-//								.addComponent(userNameLabel)
-//								.addComponent(userNameField)
-//								.addComponent(passwordLabel)
-//								.addComponent(passwordField)
-//								.addComponent(lastChangeDateLabel)
-//								.addComponent(dateChooser)
-//						.addGroup(layout.createSequentialGroup()
-//								.addComponent(resetFormButton)
-//								.addComponent(addNewEntryButton)
-//								.addComponent(saveChangesButton))
-//		);
 
 		layout.setVerticalGroup(vGroup);
 	}
