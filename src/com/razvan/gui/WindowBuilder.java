@@ -1,5 +1,6 @@
 package com.razvan.gui;
 
+import com.razvan.utils.events.EditEventListener;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
@@ -8,10 +9,12 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
-public class WindowBuilder extends MouseAdapter {
+public class WindowBuilder extends MouseAdapter implements EditEventListener {
 	private UserDashboard userDashboard;
 	private UserTableOperations handler;
 	private JPanel parentPanel = new JPanel(new BorderLayout());
@@ -57,6 +60,14 @@ public class WindowBuilder extends MouseAdapter {
 		accountNameField.setMaximumSize(new Dimension(300, 25));
 		userNameField.setMaximumSize(new Dimension(300, 25));
 		passwordField.setMaximumSize(new Dimension(300, 25));
+
+		//Sets the edit record event listener
+		handler.setEditEventListener(this);
+
+		//Disables the 'Save changes' button
+		saveChangesButton.setEnabled(false);
+
+
 	}
 
 	public void createNewEntryForm() {
@@ -266,6 +277,20 @@ public class WindowBuilder extends MouseAdapter {
 			}
 		});
 
+		saveChangesButton.addActionListener(actionEvent -> {
+//			if(!handler.getHasRequestedRowEdit()) {
+//				JOptionPane.showMessageDialog(userDashboard, "You must select the record that you want to edit!", "Data editing", JOptionPane.INFORMATION_MESSAGE);
+//				return;
+//			}
+//
+//			String selectedRowData = handler.getSelectedRowData();
+//			String[] recordComponents = selectedRowData.split(",");
+//			accountNameField.setText(recordComponents[0]);
+//			userNameField.setText(recordComponents[1]);
+//			passwordField.setText(recordComponents[2]);
+//			//dateChooser.setDate();
+		});
+
 		userDashboard.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -317,5 +342,40 @@ public class WindowBuilder extends MouseAdapter {
 		}
 
 		return 0;
+	}
+
+	@Override
+	public void onEdit(String eventData) {
+		if(eventData == null) {
+			return;
+		}
+
+		int recordComponentsCount = 4;
+		String[] recordComponents = eventData.split("\\|\\|");
+
+		if(recordComponents.length != recordComponentsCount) {
+			return;
+		}
+
+		String extractedAccountName = recordComponents[0];
+		String extractedUserName = recordComponents[1];
+		String extractedPassword = recordComponents[2];
+		String extractedLastChangeDate = recordComponents[3];
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Date lastChangeDate;
+
+		try {
+			lastChangeDate = sdf.parse(extractedLastChangeDate);
+		} catch (ParseException ex) {
+			JOptionPane.showMessageDialog(userDashboard, "Unable to parse the date of the record being selected for edit!", "Data edit", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		accountNameField.setText(extractedAccountName);
+		userNameField.setText(extractedUserName);
+		passwordField.setText(extractedPassword);
+		dateChooser.setDate(lastChangeDate);
+		saveChangesButton.setEnabled(true);
 	}
 }

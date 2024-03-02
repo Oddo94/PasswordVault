@@ -4,6 +4,7 @@ import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.io_manager.IOFileManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
 import com.razvan.utils.GUIInputChecker;
+import com.razvan.utils.events.EditEventListener;
 
 import javax.crypto.SecretKey;
 import javax.swing.*;
@@ -26,6 +27,7 @@ public class UserTableOperations extends MouseAdapter {
 	private UserDashboard userDashboard;
 	private JTable userDataTable;
 	static int userOption;
+	private static boolean hasRequestedRowEdit;
 	private boolean hasCanceledChange;
 	private boolean hasCopiedCellContent;
 	private String oldCellValue;
@@ -33,6 +35,7 @@ public class UserTableOperations extends MouseAdapter {
 	private String userFileName;
 	private IOFileManager fileManager = new IOFileManager();
 	private UserDataSecurityManager securityManager = new UserDataSecurityManager();
+	private EditEventListener editEventListener;
 
 	public UserTableOperations(UserDashboard userDashboard, String userFileName) {
 		this.userDashboard = userDashboard;
@@ -80,7 +83,7 @@ public class UserTableOperations extends MouseAdapter {
 
 
 	/*
-	 * The method that creates the table that displays the user data. 
+	 * The method that creates the table that displays the user data.
 	 * It receives the number of rows and columns as parameters.
 	 * This data also used for creating the DefaultTableModel.
 	 */
@@ -89,12 +92,18 @@ public class UserTableOperations extends MouseAdapter {
 
 		//Creates the table
 		userDataTable = new JTable(numRows,numColumns);
-		
+
 		//Sets the table cell renderer in order to allow the highlighting of expired passwords
 		setTableCellRendererForExpiredPasswordHighlight(userDataTable);
 
-		//Creates the table model
-		DefaultTableModel tableModel = new DefaultTableModel(numRows,numColumns);
+		//Creates the table model and disables cell editing (isCellEditable method will return false for any cell)
+		DefaultTableModel tableModel = new DefaultTableModel(numRows,numColumns) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
 		tableModel.setColumnIdentifiers(columnNames);
 		userDataTable.setModel(tableModel);
 		//Enables the sorting option on the columns of the table
@@ -112,7 +121,7 @@ public class UserTableOperations extends MouseAdapter {
 		JScrollPane tableScrollPane = new JScrollPane(userDataTable);
 		tablePanel.add(tableScrollPane);
 
-		
+
 		//Adds the table panel to the user dashboard
 		userDashboard.add(tablePanel, new BorderLayout().CENTER);
 
@@ -148,7 +157,7 @@ public class UserTableOperations extends MouseAdapter {
 		File userDataFile = new File(appDataPath + "/userData/Razvan");
 
 		//Secret key retrieval and encryption of the table data	
-		SecretKey secretKey = securityManager.retrieveSecretKey(userFileName);	
+		SecretKey secretKey = securityManager.retrieveSecretKey(userFileName);
 		byte[] encryptedData = securityManager.performAESEncryption(tableData, secretKey, initializationVector);
 
 		//Null check to make sure the encryption process was successful
@@ -234,16 +243,19 @@ public class UserTableOperations extends MouseAdapter {
 
 	/*
 	 * The method used for adding a MouseListener to the table so that when the user
-	 * right clicks the mouse a menu containing the options "Copy" and "Delete" will
+	 * right clicks the mouse, a menu containing the options "Copy" and "Delete" will
 	 * appear
 	 */
 	public void addMouseListenerToTable() {
 		JPopupMenu popupMenu = new JPopupMenu();
 
-		JMenuItem deleteRowOption = new JMenuItem("Delete");
 		JMenuItem copyCellDataOption = new JMenuItem("Copy");
+		JMenuItem editRowOption = new JMenuItem("Edit");
+		JMenuItem deleteRowOption = new JMenuItem("Delete");
+
 
 		popupMenu.add(copyCellDataOption);
+		popupMenu.add(editRowOption);
 		popupMenu.add(deleteRowOption);
 
 		userDataTable.addMouseListener(new MouseAdapter(){
@@ -266,8 +278,9 @@ public class UserTableOperations extends MouseAdapter {
 			}
 		});
 
-		addMouseListenerToDeleteOption(deleteRowOption, userDataTable.getSelectedRow());
 		addMouseListenerToCopyOption(copyCellDataOption, userDataTable.getSelectedRow());
+		addMouseListenerToEditOption(editRowOption, userDataTable.getSelectedRow());
+		addMouseListenerToDeleteOption(deleteRowOption, userDataTable.getSelectedRow());
 	}
 
 	//Method for adding a TableModelListener which is responsible for managing the changes performed to the table data
@@ -316,34 +329,16 @@ public class UserTableOperations extends MouseAdapter {
 
 					if (userOption == 0) {
 						//System.out.println("User option for insertion " + userOption);
-						addNewEntry(getTableData());	
+						addNewEntry(getTableData());
 					}
 
 				} else if (e.getType() == TableModelEvent.DELETE) {
 					removeEntry(getTableData());
-				}	
+				}
 			}
-		};	
+		};
 
 		dtm.addTableModelListener(tableListener);
-	}
-
-	//Adding MouseListener for the delete option displayed when right clicking on a table cell
-	public void addMouseListenerToDeleteOption(JMenuItem popupItem, int entryNumber) {
-
-		popupItem.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {				
-				//removeEntry(getSelectedRowData());
-				DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
-
-				userOption = JOptionPane.showConfirmDialog(null, "Are you sure that you want to delete the selected row?", "Delete confirmation", JOptionPane.YES_NO_OPTION);
-
-				if (userOption == 0) {
-					dtm.removeRow(userDataTable.getSelectedRow());
-				}
-
-			}
-		});		
 	}
 
 	//Adding MouseListener for the copy option displayed when right clicking on a table cell
@@ -363,9 +358,43 @@ public class UserTableOperations extends MouseAdapter {
 			}
 		});
 	}
+	public void addMouseListenerToEditOption(JMenuItem popupItem, int entryNumber) {
+		popupItem.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+//				userOption = JOptionPane.showConfirmDialog(null, "Are you sure that you want to edit the selected record?", "Edit confirmation", JOptionPane.YES_NO_OPTION);
+//
+//				if(userOption == 0) {
+//
+//				}
+				if (editEventListener != null) {
+					String selectedRowData = getSelectedRowData();
+					editEventListener.onEdit(selectedRowData);
+				}
+
+			}
+		});
+	}
+
+	//Adding MouseListener for the delete option displayed when right clicking on a table cell
+	public void addMouseListenerToDeleteOption(JMenuItem popupItem, int entryNumber) {
+
+		popupItem.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				//removeEntry(getSelectedRowData());
+				DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
+
+				userOption = JOptionPane.showConfirmDialog(null, "Are you sure that you want to delete the selected row?", "Delete confirmation", JOptionPane.YES_NO_OPTION);
+
+				if (userOption == 0) {
+					dtm.removeRow(userDataTable.getSelectedRow());
+				}
+
+			}
+		});
+	}
 
 	/*
-	 * Method used for retrieving table data. The string stores the data in the following format: 
+	 * Method used for retrieving table data. The string stores the data in the following format:
 	 * -the cell data contained in a row is separated by a ","
 	 * -each row is separated by a newline ("\n") character
 	 */
@@ -401,9 +430,8 @@ public class UserTableOperations extends MouseAdapter {
 				sb.append(userDataTable.getValueAt(row, i));
 				break;
 			}
-			sb.append(userDataTable.getValueAt(row, i) + ",");
+			sb.append(userDataTable.getValueAt(row, i) + "||");
 		}
-
 
 		return sb.toString();
 	}
@@ -411,51 +439,51 @@ public class UserTableOperations extends MouseAdapter {
 	//Sets the table cell renderer so that the expired passwords are highlighted
 	private void setTableCellRendererForExpiredPasswordHighlight(JTable table) {
 		Objects.requireNonNull(table, "The table object provided for setting the cell renderer cannot be null.");
-		
+
 		table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer(){
-		    @Override
-		    public Component getTableCellRendererComponent(JTable table,
-		            Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+			@Override
+			public Component getTableCellRendererComponent(JTable table,
+														   Object value, boolean isSelected, boolean hasFocus, int row, int col) {
 
-		        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
 
-		        String status = (String)table.getModel().getValueAt(row, 3);
+				String status = (String)table.getModel().getValueAt(row, 3);
 				DefaultTableModel dtm = getUserDataTableModel();
 				String passwordDateFormat = "dd-MM-yyyy";
-				
-				
+
+
 				int passwordDateColumnIndex = 3;
 				//The number of days from creation after which the password is considered expired
 				int daysSinceCreationLimit = 180;
 
 
 				String passwordDate = (String) dtm.getValueAt(row, passwordDateColumnIndex);
-					boolean isExpiredPassword = false;
-					boolean wasChecked = false;
+				boolean isExpiredPassword = false;
+				boolean wasChecked = false;
 
-					try {
-						isExpiredPassword = GUIInputChecker.isExpiredPassword(passwordDate, passwordDateFormat, daysSinceCreationLimit);
-						wasChecked = true;
+				try {
+					isExpiredPassword = GUIInputChecker.isExpiredPassword(passwordDate, passwordDateFormat, daysSinceCreationLimit);
+					wasChecked = true;
 
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-		        		           
-		        
-		        if (isExpiredPassword && wasChecked) {
-		            //Sets the RED/WHITE color scheme for highlighting expired passwords
-		        	setBackground(Color.RED);
-		            setForeground(Color.WHITE);
-		        } else {
-		        	//Sets WHITE/BLACK standard color scheme if the password is not expired
-		            setBackground(table.getBackground());
-		            setForeground(table.getForeground());
-		        }       
-		        return this;
-		    }   
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+
+				if (isExpiredPassword && wasChecked) {
+					//Sets the RED/WHITE color scheme for highlighting expired passwords
+					setBackground(Color.RED);
+					setForeground(Color.WHITE);
+				} else {
+					//Sets WHITE/BLACK standard color scheme if the password is not expired
+					setBackground(table.getBackground());
+					setForeground(table.getForeground());
+				}
+				return this;
+			}
 		});
 	}
-	
+
 
 
 	public DefaultTableModel getUserDataTableModel() {
@@ -464,6 +492,18 @@ public class UserTableOperations extends MouseAdapter {
 
 	public JTable getUserDataTable() {
 		return this.userDataTable;
+	}
+
+	public boolean getHasRequestedRowEdit() {
+		return hasRequestedRowEdit;
+	}
+
+	public void setHasRequestedRowEdit(boolean state) {
+		hasRequestedRowEdit = state;
+	}
+
+	public void setEditEventListener(EditEventListener editEventListener) {
+		this.editEventListener = editEventListener;
 	}
 }
 
