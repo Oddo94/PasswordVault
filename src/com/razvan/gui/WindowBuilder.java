@@ -1,18 +1,23 @@
 package com.razvan.gui;
 
+import com.razvan.utils.SimpleDocumentListener;
 import com.razvan.utils.events.EditEventListener;
+import com.razvan.utils.model.AccountRecord;
 import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class WindowBuilder extends MouseAdapter implements EditEventListener {
 	private UserDashboard userDashboard;
@@ -40,12 +45,15 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
 	private JDateChooser dateChooser = new JDateChooser();
 
+	private List<JComponent> fieldList;
+
 
 
 
 	public WindowBuilder(UserDashboard userDashboard, UserTableOperations handler) {
 		this.userDashboard = userDashboard;
 		this.handler = handler;
+		this.fieldList = new ArrayList<>(Arrays.asList(accountNameField, userNameField, passwordField, dateChooser));
 
 		//Sets the default date of the JDateChooser
 		dateChooser.setDate(new Date());
@@ -64,19 +72,18 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 		//Sets the edit record event listener
 		handler.setEditEventListener(this);
 
-		//Disables the 'Save changes' button
+		//Disables the 'Add entry' and 'Save changes' buttons
+		addNewEntryButton.setEnabled(false);
 		saveChangesButton.setEnabled(false);
-
-
 	}
 
 	public void createNewEntryForm() {
 		//Creating field and field name arrays for further processing
-		JComponent[] fieldsArray = {accountNameField, userNameField, passwordField, dateChooser};
+		//JComponent[] fieldsArray = {accountNameField, userNameField, passwordField, dateChooser};
 		String[] fieldNames = {"Account field", "User field", "Password field"};
 
 		//Setting field names for further checks regarding the state of each field(empty or not)
-		setNamesToInputFields(fieldsArray, fieldNames);
+		setNamesToInputFields(fieldList, fieldNames);
 
 		//Setting the form layout
 		setFormComponentsLayout(newEntryForm);
@@ -87,7 +94,8 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 		userDashboard.add(parentPanel, BorderLayout.SOUTH);
 
 		//Adding action listeners
-		addActionListenersToFormButtons(fieldsArray);
+		addActionListenersToTextFields(fieldList);
+		addActionListenersToFormButtons(fieldList);
 	}
 
 	private void setFormComponentsLayout(JPanel newEntryForm) {
@@ -177,8 +185,8 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 	}
 
 	//Method for setting the names of input fields
-	private void setNamesToInputFields(JComponent[] inputFields, String[] fieldNames) {
-		if (inputFields.length != fieldNames.length) {
+	private void setNamesToInputFields(List<JComponent> inputFields, String[] fieldNames) {
+		if (inputFields.size() != fieldNames.length) {
 			return;
 		}
 
@@ -190,16 +198,16 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 	}
 
 	//Method for collecting the data entered by the user 
-	private String collectNewEntryData(JComponent[] fieldsArray ) {
+	private String collectNewEntryData(List<JComponent> fieldList) {
 		StringBuilder rowData = new StringBuilder();
 
 		//The objects are casted because the fieldsArray is of type JComponent and its components need to be treated differently according to their specific type
-		for (int i = 0; i < fieldsArray.length; i++) {
+		for (int i = 0; i < fieldList.size(); i++) {
 			String fieldContent = "";
-			if (fieldsArray[i].getClass() == JTextField.class) {
-				fieldContent = ((JTextField) fieldsArray[i]).getText();
+			if (fieldList.get(i).getClass() == JTextField.class) {
+				fieldContent = ((JTextField) fieldList.get(i)).getText();
 
-			} else if (fieldsArray[i].getClass() == JDateChooser.class) {
+			} else if (fieldList.get(i).getClass() == JDateChooser.class) {
 				//The following format code is necessary in order to display the date retrieved from the JDateChooser in the correct format when it is inserted in the JTable(e.g. 08-12-2021)
 				//Gets the selected date
 				Date selectedDate = dateChooser.getDate();
@@ -213,7 +221,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 			}
 
 			//The separator "," is added only if the processing has not reached the last object of the array
-			if (i != fieldsArray.length - 1) {
+			if (i != fieldList.size() - 1) {
 				if ("".equals(fieldContent)) {
 					rowData.append("null" + ",");
 				} else {
@@ -237,12 +245,12 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
 
 
-	public void addActionListenersToFormButtons(JComponent[] fieldsArray) {
+	public void addActionListenersToFormButtons(List<JComponent> fieldList) {
 
 		//Adding action listener to the reset button of the entry form
 		resetFormButton.addActionListener(actionEvent -> {
 			//The casting is necessary for the reasons provided in the collectNewEntryData method
-			for (JComponent currentField : fieldsArray) {
+			for (JComponent currentField : fieldList) {
 				if (currentField.getClass() == JTextField.class) {
 					((JTextField) currentField).setText("");
 
@@ -252,12 +260,17 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 					((JDateChooser) currentField).setDate(currentDate);
 				}
 			}
+
+			//Disables the 'Save changes' button if the reset button was pressed while the form contains data that is about to be edited
+			if (saveChangesButton.isEnabled()) {
+				saveChangesButton.setEnabled(false);
+			}
 		});
 
 		//Adding action listener to the add new entry button of the entry form
 		addNewEntryButton.addActionListener(actionEvent -> {
 
-			for (JComponent currentField : fieldsArray) {
+			for (JComponent currentField : fieldList) {
 				if (currentField.getClass() == JTextField.class) {
 					if (((JTextField) currentField).getText().isEmpty()) {
 						JOptionPane.showMessageDialog(userDashboard, "Please fill in the required fields!");
@@ -267,7 +280,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
 			}
 
-			String rowData = collectNewEntryData(fieldsArray);
+			String rowData = collectNewEntryData(fieldList);
 
 			handler.addNewEntry(rowData.toString());
 			UserTableOperations.userOption = JOptionPane.showConfirmDialog(null,"Do you want to insert a new row?","Data saving",JOptionPane.YES_NO_CANCEL_OPTION);
@@ -278,23 +291,45 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 		});
 
 		saveChangesButton.addActionListener(actionEvent -> {
-//			if(!handler.getHasRequestedRowEdit()) {
-//				JOptionPane.showMessageDialog(userDashboard, "You must select the record that you want to edit!", "Data editing", JOptionPane.INFORMATION_MESSAGE);
-//				return;
-//			}
-//
-//			String selectedRowData = handler.getSelectedRowData();
-//			String[] recordComponents = selectedRowData.split(",");
-//			accountNameField.setText(recordComponents[0]);
-//			userNameField.setText(recordComponents[1]);
-//			passwordField.setText(recordComponents[2]);
-//			//dateChooser.setDate();
+			
 		});
 
 		userDashboard.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				checkIfUserConfirmsExit();
+			}
+		});
+	}
+
+	public void addActionListenersToTextFields(List<JComponent> fieldList) {
+		accountNameField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			public void update(DocumentEvent e) {
+				if (hasDataOnRequiredFields(fieldList)) {
+					setButtonState(addNewEntryButton, true);
+				} else {
+					setButtonState(addNewEntryButton, false);
+				}
+			}
+		});
+
+		userNameField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			public void update(DocumentEvent e) {
+				if (hasDataOnRequiredFields(fieldList)) {
+					setButtonState(addNewEntryButton, true);
+				} else {
+					setButtonState(addNewEntryButton, false);
+				}
+			}
+		});
+
+		passwordField.getDocument().addDocumentListener(new SimpleDocumentListener() {
+			public void update(DocumentEvent e) {
+				if (hasDataOnRequiredFields(fieldList)) {
+					setButtonState(addNewEntryButton, true);
+				} else {
+					setButtonState(addNewEntryButton, false);
+				}
 			}
 		});
 	}
@@ -345,22 +380,27 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 	}
 
 	@Override
-	public void onEdit(String eventData) {
-		if(eventData == null) {
+	public void onEdit(AccountRecord accountRecord) {
+		if(accountRecord == null) {
 			return;
 		}
 
-		int recordComponentsCount = 4;
-		String[] recordComponents = eventData.split("\\|\\|");
+//		int recordComponentsCount = 4;
+//		String[] recordComponents = eventData.split("\\|\\|");
+//
+//		if(recordComponents.length != recordComponentsCount) {
+//			return;
+//		}
+//
+//		String extractedAccountName = recordComponents[0];
+//		String extractedUserName = recordComponents[1];
+//		String extractedPassword = recordComponents[2];
+//		String extractedLastChangeDate = recordComponents[3];
 
-		if(recordComponents.length != recordComponentsCount) {
-			return;
-		}
-
-		String extractedAccountName = recordComponents[0];
-		String extractedUserName = recordComponents[1];
-		String extractedPassword = recordComponents[2];
-		String extractedLastChangeDate = recordComponents[3];
+		String extractedAccountName = accountRecord.getAccountName();
+		String extractedUserName = accountRecord.getUsername();
+		String extractedPassword = accountRecord.getPassword();
+		String extractedLastChangeDate = accountRecord.getLastChangeDate();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Date lastChangeDate;
@@ -377,5 +417,34 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 		passwordField.setText(extractedPassword);
 		dateChooser.setDate(lastChangeDate);
 		saveChangesButton.setEnabled(true);
+
+		//Disables the 'Add entry" button in order to prevent the insertion of a duplicate record containing the data that is about to be edited
+		addNewEntryButton.setEnabled(false);
+	}
+
+	public boolean hasDataOnRequiredFields(List<JComponent> fieldList) {
+		if (fieldList == null) {
+			return false;
+		}
+
+		for (JComponent component : fieldList) {
+			//Only the text fields are checked because the date chooser is always populated with a value
+			if (component instanceof JTextField) {
+				JTextField textField = (JTextField) component;
+				if ("".equals(textField.getText())) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	public void setButtonState(JButton targetButton, boolean state) {
+		if (targetButton == null) {
+			return;
+		}
+
+		targetButton.setEnabled(state);
 	}
 }

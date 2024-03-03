@@ -5,6 +5,7 @@ import com.razvan.io_manager.IOFileManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
 import com.razvan.utils.GUIInputChecker;
 import com.razvan.utils.events.EditEventListener;
+import com.razvan.utils.model.AccountRecord;
 
 import javax.crypto.SecretKey;
 import javax.swing.*;
@@ -367,8 +368,8 @@ public class UserTableOperations extends MouseAdapter {
 //
 //				}
 				if (editEventListener != null) {
-					String selectedRowData = getSelectedRowData();
-					editEventListener.onEdit(selectedRowData);
+					AccountRecord accountRecord = getSelectedAccountRecord();
+					editEventListener.onEdit(accountRecord);
 				}
 
 			}
@@ -420,21 +421,39 @@ public class UserTableOperations extends MouseAdapter {
 	}
 
 	//The method that returns the values from the selected row
-	public String getSelectedRowData() {
-		StringBuilder sb = new StringBuilder();
+//	public String getSelectedRowData() {
+//		StringBuilder sb = new StringBuilder();
+//		int row = userDataTable.getSelectedRow();
+//		int columnCount = userDataTable.getColumnCount();
+//
+//		for (int i = 0; i < columnCount; i++) {
+//			if (i == columnCount - 1) {
+//				sb.append(userDataTable.getValueAt(row, i));
+//				break;
+//			}
+//			sb.append(userDataTable.getValueAt(row, i) + "||");
+//		}
+//
+//		return sb.toString();
+//	}
+
+	public AccountRecord getSelectedAccountRecord() {
 		int row = userDataTable.getSelectedRow();
-		int columnCount = userDataTable.getColumnCount();
 
-		for (int i = 0; i < columnCount; i++) {
-			if (i == columnCount - 1) {
-				sb.append(userDataTable.getValueAt(row, i));
-				break;
-			}
-			sb.append(userDataTable.getValueAt(row, i) + "||");
-		}
+		int accountNameColumnIndex = 0;
+		int usernameColumnIndex= 1;
+		int passwordColumnIndex = 2;
+		int lastChangeDateColumnIndex = 3;
 
-		return sb.toString();
+		AccountRecord selectedAccount = new AccountRecord();
+		selectedAccount.setAccountName(userDataTable.getValueAt(row, accountNameColumnIndex).toString());
+		selectedAccount.setUsername(userDataTable.getValueAt(row, usernameColumnIndex).toString());
+		selectedAccount.setPassword(userDataTable.getValueAt(row, passwordColumnIndex).toString());
+		selectedAccount.setLastChangeDate(userDataTable.getValueAt(row, lastChangeDateColumnIndex).toString());
+
+		return selectedAccount;
 	}
+
 
 	//Sets the table cell renderer so that the expired passwords are highlighted
 	private void setTableCellRendererForExpiredPasswordHighlight(JTable table) {
