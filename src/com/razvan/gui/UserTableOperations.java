@@ -14,6 +14,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.text.TableView;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -293,38 +294,39 @@ public class UserTableOperations extends MouseAdapter {
 
 				if (e.getType() == TableModelEvent.UPDATE && !hasCopiedCellContent) {
 
-					if (hasCanceledChange) {
-						hasCanceledChange = false;
-						return;
-					}
-
-					DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
-
-
-					userOption = JOptionPane.showConfirmDialog(null,"Do you want to save the changes?","Data saving",JOptionPane.YES_NO_OPTION);
-
-					//Checks if the modified date is correct(from the value perspective) and has the right format after the user has changed it
-					String modifiedDate =(String) dtm.getValueAt(e.getFirstRow(), e.getColumn());
-					if(!GUIInputChecker.isValidDate(modifiedDate, "dd-MM-yyyy")) {
-						JOptionPane.showMessageDialog(userDashboard, "Invalid date and/or format! The date must have the format 'dd-mm-yyyy'.", "User dashboard", JOptionPane.WARNING_MESSAGE);
-						//Sets the flag to true as the change will not be saved due to the incorrect date format
-						hasCanceledChange = true;
-						//Sets the cell content to its old value since the user provided data is incorrect
-						dtm.setValueAt(oldCellValue, e.getFirstRow(), e.getColumn());
-						return;
-					}
-
-
-					if (userOption == 0) {
-						editEntry();
-					} else {
-						hasCanceledChange = true;
-						System.out.println("NO option selected");
-						dtm.setValueAt(oldCellValue, e.getFirstRow(), e.getColumn());
-						System.out.println("Changed row :" +  e.getFirstRow() +"\n" + "Changed column:" + e.getColumn());;
-					}
-
-					System.out.println("Table was updated!");
+//					if (hasCanceledChange) {
+//						hasCanceledChange = false;
+//						return;
+//					}
+//
+//					DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
+//
+//
+//					userOption = JOptionPane.showConfirmDialog(null,"Do you want to save the changes?","Data saving",JOptionPane.YES_NO_OPTION);
+//
+//					//Checks if the modified date is correct(from the value perspective) and has the right format after the user has changed it
+//					String modifiedDate =(String) dtm.getValueAt(e.getFirstRow(), e.getColumn());
+//					if(!GUIInputChecker.isValidDate(modifiedDate, "dd-MM-yyyy")) {
+//						JOptionPane.showMessageDialog(userDashboard, "Invalid date and/or format! The date must have the format 'dd-mm-yyyy'.", "User dashboard", JOptionPane.WARNING_MESSAGE);
+//						//Sets the flag to true as the change will not be saved due to the incorrect date format
+//						hasCanceledChange = true;
+//						//Sets the cell content to its old value since the user provided data is incorrect
+//						dtm.setValueAt(oldCellValue, e.getFirstRow(), e.getColumn());
+//						return;
+//					}
+//
+//
+//					if (userOption == 0) {
+//						editEntry();
+//					} else {
+//						hasCanceledChange = true;
+//						System.out.println("NO option selected");
+//						dtm.setValueAt(oldCellValue, e.getFirstRow(), e.getColumn());
+//						System.out.println("Changed row :" +  e.getFirstRow() +"\n" + "Changed column:" + e.getColumn());;
+//					}
+//
+//					System.out.println("Table was updated!");
+					editEntry();
 
 				} else if (e.getType() == TableModelEvent.INSERT) {
 
@@ -503,6 +505,19 @@ public class UserTableOperations extends MouseAdapter {
 		});
 	}
 
+	public int updateSelectedRow(AccountRecord accountRecord) {
+		if (accountRecord == null) {
+			return -1;
+		}
+
+		int selectedRowIndex = userDataTable.getSelectedRow();
+		userDataTable.setValueAt(accountRecord.getAccountName(), selectedRowIndex, 0);
+		userDataTable.setValueAt(accountRecord.getUsername(),selectedRowIndex, 1);
+		userDataTable.setValueAt(accountRecord.getPassword(),selectedRowIndex, 2);
+		userDataTable.setValueAt(accountRecord.getLastChangeDate(),selectedRowIndex, 3);
+
+		return 0;
+	}
 
 
 	public DefaultTableModel getUserDataTableModel() {
