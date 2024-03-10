@@ -1,14 +1,15 @@
 package com.razvan.gui;
 
+import com.toedter.calendar.JDateChooser;
+
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.toedter.calendar.JDateChooser;
 
 public class WindowBuilder extends MouseAdapter {
 	private UserDashboard userDashboard;
@@ -47,7 +48,9 @@ public class WindowBuilder extends MouseAdapter {
 		dateChooser.setDateFormatString("dd-MM-yyyy");
 		//Sets the JDateChooser size
 		dateChooser.setMaximumSize(new Dimension(150, 25));
-		
+
+		dateChooser.getDateEditor().setEnabled(false);
+
 		//Sets size for the rest of the form input fields
 		accountNameField.setMaximumSize(new Dimension(300, 25));
 		userNameField.setMaximumSize(new Dimension(300, 25));
@@ -71,7 +74,7 @@ public class WindowBuilder extends MouseAdapter {
 		userDashboard.add(parentPanel, BorderLayout.SOUTH);
 
 		//Adding action listeners
-		addActionListenersToFormButtons(fieldsArray);	
+		addActionListenersToFormButtons(fieldsArray);
 	}
 
 	private void setFormComponentsLayout(JPanel newEntryForm) {
@@ -122,19 +125,11 @@ public class WindowBuilder extends MouseAdapter {
 
 	public void addActionListenersToMenuOptions(JMenuItem logoutOption, JMenuItem exitOption) {
 		logoutOption.addActionListener(actionEvent ->{
-			//CHANGE-removes all the rows from the user data table when the user logs out of his account
-			DefaultTableModel userDataTableModel = handler.getUserDataTableModel();
-			LoginWindow loginWindow = new LoginWindow();
-
-			userDashboard.setVisible(false);
-			//CHANGE-removes the user dashboard window after logout
-			userDashboard.dispose();
-			loginWindow.setVisible(true);
-
+			checkIfUserConfirmsLogout();
 		});
 
 		exitOption.addActionListener(actionEvent -> {
-			System.exit(0);
+			checkIfUserConfirmsExit();
 		});
 	}
 
@@ -147,7 +142,7 @@ public class WindowBuilder extends MouseAdapter {
 		int i = 0;
 		for (JComponent currentField : inputFields) {
 			currentField.setName(fieldNames[i++]);
-		}	
+		}
 
 	}
 
@@ -235,7 +230,60 @@ public class WindowBuilder extends MouseAdapter {
 			UserTableOperations.userOption = JOptionPane.showConfirmDialog(null,"Do you want to insert a new row?","Data saving",JOptionPane.YES_NO_CANCEL_OPTION);
 			if( UserTableOperations.userOption == 0) {
 				handler.getUserDataTableModel().addRow(rowData.toString().split(","));
+
 			}
 		});
+
+		userDashboard.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				checkIfUserConfirmsExit();
+			}
+		});
+	}
+
+	public void checkIfUserConfirmsLogout() {
+		String message = "Are you sure that you want to log out?";
+		int confirmationResult = displayConfirmationPopup(userDashboard, message);
+
+		if(confirmationResult == -1) {
+			return;
+		} else {
+			LoginWindow loginWindow = new LoginWindow();
+
+			userDashboard.setVisible(false);
+			//Removes the user dashboard window after logout
+			userDashboard.dispose();
+
+			//Displays the login window
+			loginWindow.setVisible(true);
+		}
+	}
+
+	public void checkIfUserConfirmsExit() {
+		String message = "Are you sure that you want to exit?";
+		int confirmationResult = displayConfirmationPopup(userDashboard, message);
+
+		if(confirmationResult == -1) {
+			userDashboard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		} else {
+			//Instructs the programs to exit when the users presses the 'X' button of the window (no other command is needed)
+			userDashboard.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			//If the window close command is sent from another control (e.g. JMenuItem) System.exit(0) needs to be called explicitly to force the program termination
+			System.exit(0);
+		}
+	}
+
+	//Generic method for displaying confirmation pop-ups in the user dashboard window
+	public int displayConfirmationPopup(JFrame frame, String message) {
+		int userOption = JOptionPane.showConfirmDialog(frame, message, "User dashboard", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null);
+
+		//When the user selects the 'No' option or closes the dialog from the 'X' button
+		if(userOption == 1 || userOption == -1) {
+			return -1;
+		}
+
+		return 0;
 	}
 }

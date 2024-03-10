@@ -1,25 +1,24 @@
 package com.razvan.gui;
-import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.*;
-
-import javax.crypto.SecretKey;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.io_manager.IOFileManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
+import com.razvan.utils.GUIInputChecker;
 
-import java.util.*;
+import javax.crypto.SecretKey;
+import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.Objects;
 
 
 
@@ -44,7 +43,7 @@ public class UserTableOperations extends MouseAdapter {
 	public UserTableOperations() {
 
 	}
-	
+
 	//The method that fills the table using the user data file if this is not empty
 	public JTable fillTable(JTable table) {
 		DefaultTableModel dtm =(DefaultTableModel) table.getModel();
@@ -79,7 +78,7 @@ public class UserTableOperations extends MouseAdapter {
 		return table;
 	}
 
-	
+
 	/*
 	 * The method that creates the table that displays the user data. 
 	 * It receives the number of rows and columns as parameters.
@@ -88,30 +87,38 @@ public class UserTableOperations extends MouseAdapter {
 	public JTable createTable(int numRows, int numColumns) {
 		String[] columnNames = {"Account name", "User name", "Password","Last password change date"};
 
+		//Creates the table
 		userDataTable = new JTable(numRows,numColumns);
+		
+		//Sets the table cell renderer in order to allow the highlighting of expired passwords
+		setTableCellRendererForExpiredPasswordHighlight(userDataTable);
 
+		//Creates the table model
 		DefaultTableModel tableModel = new DefaultTableModel(numRows,numColumns);
 		tableModel.setColumnIdentifiers(columnNames);
 		userDataTable.setModel(tableModel);
 		//Enables the sorting option on the columns of the table
 		userDataTable.setAutoCreateRowSorter(true);
 
+		//Sets the column names of the table
 		for(int i = 0; i < userDataTable.getColumnCount(); i++) {
 
 			TableColumn currentColumn = userDataTable.getTableHeader().getColumnModel().getColumn(i);
 			currentColumn.setHeaderValue(columnNames[i]);
 		}
 
+		//Creates the JPanel that contains the table
 		JPanel tablePanel = new JPanel();
 		JScrollPane tableScrollPane = new JScrollPane(userDataTable);
 		tablePanel.add(tableScrollPane);
 
-
+		
+		//Adds the table panel to the user dashboard
 		userDashboard.add(tablePanel, new BorderLayout().CENTER);
 
 		return userDataTable;
 	}
-	
+
 	//The method that adds the table to the user dashboard
 	public void addTableToWindow(JTable table) {
 		JPanel tablePanel = new JPanel();
@@ -129,30 +136,30 @@ public class UserTableOperations extends MouseAdapter {
 
 		//Create a new IV(it changes at each encryption)
 		byte[] initializationVector = securityManager.createInitializationVector();
-		
+
 		//Creating the string that represents the name of the user Iv storage file(by concatenating the user name and the suffix "-Iv")
 		String suffix = "-Iv";
 		String userIvFileName = userFileName + suffix;
-		
+
 		//File containing the initialization vector used for decryption(it should probably be used directly by the restoreInitializationVector method)
 		File ivSource =  new File(appDataPath + "/security/iv/" + userIvFileName);
 
 		//The file used to write the encryption data(the name should be taken from the value passed to fillTable method)
 		File userDataFile = new File(appDataPath + "/userData/Razvan");
-		
+
 		//Secret key retrieval and encryption of the table data	
 		SecretKey secretKey = securityManager.retrieveSecretKey(userFileName);	
 		byte[] encryptedData = securityManager.performAESEncryption(tableData, secretKey, initializationVector);
-		
+
 		//Null check to make sure the encryption process was successful
 		if(encryptedData != null) {
 			//First the data is written to the user data file
 			fileManager.writeEncryptedData(userDataFile, encryptedData);
-			
+
 			//Then the initializaion vector is stored in the file
 			securityManager.storeInitializationVector(ivSource, initializationVector);
 		}
-			
+
 	}
 
 	//The method that retrieves the table data after the user has inserted a new row and then updates the user data file
@@ -161,33 +168,33 @@ public class UserTableOperations extends MouseAdapter {
 
 		//String tableData = getTableData();
 		String userDataFolder = "/userData/";
-		
+
 		File userDataFile = new File(appDataPath + userDataFolder + userFileName);
 		//File ivSource = new File(appDataPath + "/security/iv_storage");
-		
+
 		//Creating the string that represents the name of the user Iv storage file(by concatenating the user name and the suffix "-Iv")
 		String suffix = "-Iv";
 		String userIvFileName = userFileName + suffix;
-		
+
 		//Creating the string that represents the name of the user Iv storage file(by concatenating the user name and the suffix "-Iv")
 		File ivSource =  new File(appDataPath + "/security/iv/" + userIvFileName);
 
-		
+
 		SecretKey secretKey = securityManager.retrieveSecretKey(userFileName);
 		byte[] initializationVector = securityManager.createInitializationVector();
-		
+
 		//Table data encryption
 		byte[] encryptedData = securityManager.performAESEncryption(tableData, secretKey, initializationVector);
-		
+
 		if (encryptedData != null) {
-		fileManager.writeEncryptedData(userDataFile, encryptedData);
-		securityManager.storeInitializationVector(ivSource, initializationVector);
+			fileManager.writeEncryptedData(userDataFile, encryptedData);
+			securityManager.storeInitializationVector(ivSource, initializationVector);
 		}
-		
-		
-//		String fileName = "Razvan";
-//		fileManager.writeData(fileName, data);
-		
+
+
+		//		String fileName = "Razvan";
+		//		fileManager.writeData(fileName, data);
+
 	}
 
 	/*
@@ -197,32 +204,32 @@ public class UserTableOperations extends MouseAdapter {
 	 */
 	public void removeEntry(String tableData) {
 		DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
-	
+
 		//String tableData = getTableData();
 		String userDataFolder = "/userData/";
-		
+
 		File userDataFile = new File(appDataPath + userDataFolder + userFileName);
 		//File ivSource = new File(appDataPath + "/security/iv_storage");
-		
+
 		//Creating the string that represents the name of the user Iv storage file(by concatenating the user name and the suffix "-Iv")
 		String suffix = "-Iv";
 		String userIvFileName = userFileName + suffix;
-		
+
 		//File containing the initialization vector used for decryption(it should probably be used directly by the restoreInitializationVector method)
 		File ivSource =  new File(appDataPath + "/security/iv/" + userIvFileName);
 
-		
+
 		SecretKey secretKey = securityManager.retrieveSecretKey(userFileName);
 		byte[] initializationVector = securityManager.createInitializationVector();
-		
-		
+
+
 		byte[] encryptedData = securityManager.performAESEncryption(tableData, secretKey, initializationVector);
-		
+
 		if (encryptedData != null) {
-		fileManager.writeEncryptedData(userDataFile, encryptedData);
-		securityManager.storeInitializationVector(ivSource, initializationVector);
+			fileManager.writeEncryptedData(userDataFile, encryptedData);
+			securityManager.storeInitializationVector(ivSource, initializationVector);
 		}
-		
+
 	}
 
 	/*
@@ -232,10 +239,10 @@ public class UserTableOperations extends MouseAdapter {
 	 */
 	public void addMouseListenerToTable() {
 		JPopupMenu popupMenu = new JPopupMenu();
-		
+
 		JMenuItem deleteRowOption = new JMenuItem("Delete");
 		JMenuItem copyCellDataOption = new JMenuItem("Copy");
-		
+
 		popupMenu.add(copyCellDataOption);
 		popupMenu.add(deleteRowOption);
 
@@ -269,7 +276,7 @@ public class UserTableOperations extends MouseAdapter {
 		TableModelListener tableListener = new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
-				
+
 				if (e.getType() == TableModelEvent.UPDATE && !hasCopiedCellContent) {
 
 					if (hasCanceledChange) {
@@ -281,6 +288,18 @@ public class UserTableOperations extends MouseAdapter {
 
 
 					userOption = JOptionPane.showConfirmDialog(null,"Do you want to save the changes?","Data saving",JOptionPane.YES_NO_OPTION);
+
+					//Checks if the modified date is correct(from the value perspective) and has the right format after the user has changed it
+					String modifiedDate =(String) dtm.getValueAt(e.getFirstRow(), e.getColumn());
+					if(!GUIInputChecker.isValidDate(modifiedDate, "dd-MM-yyyy")) {
+						JOptionPane.showMessageDialog(userDashboard, "Invalid date and/or format! The date must have the format 'dd-mm-yyyy'.", "User dashboard", JOptionPane.WARNING_MESSAGE);
+						//Sets the flag to true as the change will not be saved due to the incorrect date format
+						hasCanceledChange = true;
+						//Sets the cell content to its old value since the user provided data is incorrect
+						dtm.setValueAt(oldCellValue, e.getFirstRow(), e.getColumn());
+						return;
+					}
+
 
 					if (userOption == 0) {
 						editEntry();
@@ -326,16 +345,16 @@ public class UserTableOperations extends MouseAdapter {
 			}
 		});		
 	}
-	
+
 	//Adding MouseListener for the copy option displayed when right clicking on a table cell
 	public void addMouseListenerToCopyOption(JMenuItem popupItem, int entryNumber) {
 		popupItem.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
-				
+
 				String dataToCopy = (String) dtm.getValueAt(userDataTable.getSelectedRow(), userDataTable.getSelectedColumn());
-			    //System.out.println(dataToCopy);
-				
+				//System.out.println(dataToCopy);
+
 				//Code for copying selected cell content to clipboard
 				StringSelection stringSelection = new StringSelection(dataToCopy);
 				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -376,7 +395,7 @@ public class UserTableOperations extends MouseAdapter {
 		StringBuilder sb = new StringBuilder();
 		int row = userDataTable.getSelectedRow();
 		int columnCount = userDataTable.getColumnCount();
-		
+
 		for (int i = 0; i < columnCount; i++) {
 			if (i == columnCount - 1) {
 				sb.append(userDataTable.getValueAt(row, i));
@@ -388,6 +407,56 @@ public class UserTableOperations extends MouseAdapter {
 
 		return sb.toString();
 	}
+
+	//Sets the table cell renderer so that the expired passwords are highlighted
+	private void setTableCellRendererForExpiredPasswordHighlight(JTable table) {
+		Objects.requireNonNull(table, "The table object provided for setting the cell renderer cannot be null.");
+		
+		table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer(){
+		    @Override
+		    public Component getTableCellRendererComponent(JTable table,
+		            Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+
+		        super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+
+		        String status = (String)table.getModel().getValueAt(row, 3);
+				DefaultTableModel dtm = getUserDataTableModel();
+				String passwordDateFormat = "dd-MM-yyyy";
+				
+				
+				int passwordDateColumnIndex = 3;
+				//The number of days from creation after which the password is considered expired
+				int daysSinceCreationLimit = 180;
+
+
+				String passwordDate = (String) dtm.getValueAt(row, passwordDateColumnIndex);
+					boolean isExpiredPassword = false;
+					boolean wasChecked = false;
+
+					try {
+						isExpiredPassword = GUIInputChecker.isExpiredPassword(passwordDate, passwordDateFormat, daysSinceCreationLimit);
+						wasChecked = true;
+
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+		        		           
+		        
+		        if (isExpiredPassword && wasChecked) {
+		            //Sets the RED/WHITE color scheme for highlighting expired passwords
+		        	setBackground(Color.RED);
+		            setForeground(Color.WHITE);
+		        } else {
+		        	//Sets WHITE/BLACK standard color scheme if the password is not expired
+		            setBackground(table.getBackground());
+		            setForeground(table.getForeground());
+		        }       
+		        return this;
+		    }   
+		});
+	}
+	
+
 
 	public DefaultTableModel getUserDataTableModel() {
 		return (DefaultTableModel) userDataTable.getModel();

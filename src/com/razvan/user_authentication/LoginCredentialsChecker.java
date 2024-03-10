@@ -1,10 +1,8 @@
 package com.razvan.user_authentication;
 
-import java.io.File;
-
-import javax.swing.JOptionPane;
-
 import com.razvan.installation_manager.ApplicationInstallManager;
+
+import java.io.File;
 
 //Class for checking the login credentials provided by the user
 public class LoginCredentialsChecker {

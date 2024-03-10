@@ -1,24 +1,21 @@
 package com.razvan.action_listener;
 
-import java.awt.TrayIcon.MessageType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-import java.util.*;
-
 import com.razvan.gui.RegisterWindow;
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.user_authentication.PasswordEncryptionManager;
 import com.razvan.user_data_security.UserDataSecurityManager;
 import com.razvan.utils.GUIInputChecker;
-
 import lombok.NonNull;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class RegisterActionListener implements ActionListener {
 

@@ -1,13 +1,15 @@
 package com.razvan.utils;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.swing.text.JTextComponent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.swing.text.JTextComponent;
 
 public class GUIInputChecker {
 
@@ -37,7 +39,7 @@ public class GUIInputChecker {
 			field.setText("");
 		}
 	}
-
+	
 	//Username check method(the username cannot start with _ , it can contain(a-z, A-Z, 0-9, _) and must have between 3 and 10 characters)
 	public static boolean checkUsername(String userName, String regexPattern) {
 		Objects.requireNonNull(userName, "The user name that has to be validated cannot be null");
@@ -97,6 +99,48 @@ public class GUIInputChecker {
 		}
 		
 		return true;
+	}
+	
+	//Method for checking the date validity based on its content and the provided format
+	public static boolean isValidDate(String date, String format) {
+		//Null checks
+		Objects.requireNonNull(date,"The date string provided for validation cannot be null");
+		Objects.requireNonNull(format, "The format string provided for validation cannot be null");
+		
+		//The method will try to parse the provided date with the specified format and if any of the two elements (date and format) are incorrect it will return false
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+			LocalDate inputDate = LocalDate.parse(date, formatter);
+			return true;
+			
+		} catch (DateTimeParseException ex) {
+			return false;
+		}
+	}
+	
+
+	public static boolean isExpiredPassword(String passwordDate, String passwordDateFormat, int daysSinceCreationLimit) throws Exception {
+		Objects.requireNonNull(passwordDate, "The string date provided for validation cannot be null.");
+		Objects.requireNonNull(passwordDateFormat, "The string date format provided for validation cannot be null.");
+		//Date value and format validation here
+		if(!isValidDate(passwordDate, passwordDateFormat)) {
+			throw new IllegalArgumentException("Invalid date and/or format.");
+		}
+		
+		if (daysSinceCreationLimit <= 0) {
+			throw new IllegalArgumentException("The number of specified days for which the password is considered active must be positive.");
+		}
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(passwordDateFormat);
+		LocalDate passwordCreationDate = LocalDate.parse(passwordDate, formatter);
+		LocalDate currentDate = LocalDate.now();
+		LocalDate passwordExpirationDate = passwordCreationDate.plusDays(daysSinceCreationLimit);
+
+		if(passwordExpirationDate.isBefore(currentDate)) {
+			return true;
+		}
+		
+		return false;
 	}
 
 

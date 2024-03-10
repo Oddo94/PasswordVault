@@ -1,18 +1,18 @@
 package com.razvan.gui;
 
-import java.awt.*;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.event.*;
-import java.io.File;
-
-import javax.swing.*;
-import java.util.*;
-import javax.swing.text.JTextComponent;
-
 import com.razvan.gui.ErrorDisplayManager.messageType;
 import com.razvan.installation_manager.ApplicationInstallManager;
 import com.razvan.utils.GUIInputChecker;
 import com.razvan.utils.XMLFileReader;
+
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SenderAccountCredentialsWindow extends JDialog {
 	//Labels

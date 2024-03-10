@@ -1,22 +1,20 @@
 package com.razvan.action_listener;
 
-import java.awt.event.ActionEvent;
+import com.razvan.gui.LoginWindow;
+import com.razvan.user_authentication.PasswordEncryptionManager;
+import com.razvan.user_authentication.PasswordResetManager;
+import com.razvan.utils.AuthenticationDataChecker;
+import com.razvan.utils.GUIInputChecker;
+import com.razvan.utils.SenderAccountCredentials;
+import lombok.NonNull;
 
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.JOptionPane;
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-
-import com.razvan.gui.LoginWindow;
-import com.razvan.user_authentication.PasswordEncryptionManager;
-import com.razvan.user_authentication.PasswordResetManager;
-import com.razvan.utils.*;
-import java.util.*;
-import lombok.NonNull;
 
 public class PasswordResetActionListener implements ActionListener {
 

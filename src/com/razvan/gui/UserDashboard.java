@@ -1,31 +1,7 @@
 package com.razvan.gui;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.*;
-import javax.swing.text.JTextComponent;
-
-import com.razvan.installation_manager.ApplicationInstallManager;
-import com.razvan.user_authentication.PasswordEncryptionManager;
-
-import java.io.*;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
+import java.awt.*;
 
 public class UserDashboard extends JFrame {
 	//private PasswordDialog passwordDialog;
@@ -46,13 +22,18 @@ public class UserDashboard extends JFrame {
 		UserTableOperations handler = new UserTableOperations(this, userName);
 		WindowBuilder builder = new WindowBuilder(this, handler);
 
+		JTable userDataTable = handler.createTable(0, 4);
 		/* If there is data to display, the table will be created and filled with the
 		 * respective data otherwise an empty table will be displayed
 		 */
 		if(hasData) {
-			handler.addTableToWindow(handler.fillTable(handler.createTable(0,4)));
+			handler.fillTable(userDataTable);
+			handler.addTableToWindow(userDataTable);
+			//handler.addTableToWindow(handler.fillTable(handler.createTable(0,4)));
+			
 		} else {
-			handler.addTableToWindow(handler.createTable(0,4));
+			handler.addTableToWindow(userDataTable);
+			//handler.addTableToWindow(handler.createTable(0,4));
 		}
 
 		handler.addMouseListenerToTable();
@@ -66,17 +47,19 @@ public class UserDashboard extends JFrame {
 		setIconImage(new ImageIcon("resources/app_icon_64.png").getImage());
 		setResizable(false);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setVisible(true);
 	}
-
-
 
 	private void setWindowTitle() {
 		JPanel dashboardTitlePanel = new JPanel();
 		JLabel dashboardTitleLabel = new JLabel("Account list");
 		dashboardTitlePanel.add(dashboardTitleLabel);
 		add(dashboardTitlePanel, BorderLayout.NORTH);
+	}
+
+	private void addWindowListener() {
+
 	}
 
 }

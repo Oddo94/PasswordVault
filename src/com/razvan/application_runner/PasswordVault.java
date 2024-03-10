@@ -1,11 +1,9 @@
 package com.razvan.application_runner;
-import java.util.*;
-
-import javax.swing.SwingUtilities;
 
 import com.razvan.gui.LoginWindow;
-import com.razvan.gui.UserDashboard;
 import com.razvan.installation_manager.ApplicationInstallManager;
+
+import javax.swing.*;
 
 public class PasswordVault {
 
