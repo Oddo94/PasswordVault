@@ -234,8 +234,6 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
                 }
             }
-
-
         }
 
         return rowData.toString();
@@ -246,45 +244,29 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
         //Adding action listener to the reset button of the entry form
         resetFormButton.addActionListener(actionEvent -> {
-            //The casting is necessary for the reasons provided in the collectNewEntryData method
-//            for (JComponent currentField : fieldList) {
-//                if (currentField.getClass() == JTextField.class) {
-//                    ((JTextField) currentField).setText("");
-//
-//                } else if (currentField.getClass() == JDateChooser.class) {
-//                    //Sets the date of the JDateChooser as the current date when the control is reset
-//                    Date currentDate = new Date();
-//                    ((JDateChooser) currentField).setDate(currentDate);
-//                }
-//            }
             resetFormFields(fieldList);
 
             //Disables the 'Save changes' button if the reset button was pressed while the form contains data that is about to be edited
             if (saveChangesButton.isEnabled()) {
                 saveChangesButton.setEnabled(false);
             }
+
+            //Sets record editing flag to false
+            if (handler.getHasRequestedRowEdit()) {
+                handler.setHasRequestedRowEdit(false);
+            }
         });
 
         //Adding action listener to the add new entry button of the entry form
         addNewEntryButton.addActionListener(actionEvent -> {
-
-            for (JComponent currentField : fieldList) {
-                if (currentField.getClass() == JTextField.class) {
-                    if (((JTextField) currentField).getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(userDashboard, "Please fill in the required fields!");
-                        return;
-                    }
-                }
-
-            }
-
             String rowData = collectNewEntryData(fieldList);
 
-            handler.addNewEntry(rowData.toString());
+            handler.addNewEntry(rowData);
             UserTableOperations.userOption = JOptionPane.showConfirmDialog(null, "Do you want to insert a new row?", "Data saving", JOptionPane.YES_NO_CANCEL_OPTION);
             if (UserTableOperations.userOption == 0) {
-                handler.getUserDataTableModel().addRow(rowData.toString().split(","));
-
+                handler.getUserDataTableModel().addRow(rowData.split(","));
+                //Resets the form fields after the new record insertion
+                resetFormFields(fieldList);
             }
         });
 
@@ -311,8 +293,16 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
                 return;
             }
 
+            //Saves the data to the file
+            handler.editEntry();
+
             JOptionPane.showMessageDialog(userDashboard, "The selected record was successfully updated!", "Data edit", JOptionPane.INFORMATION_MESSAGE);
+
+            //Clears data from form
             resetFormFields(fieldList);
+
+            //Sets record editing flag to false
+            handler.setHasRequestedRowEdit(false);
 
         });
 
@@ -327,7 +317,8 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
     public void addActionListenersToTextFields(List<JComponent> fieldList) {
         accountNameField.getDocument().addDocumentListener(new SimpleDocumentListener() {
             public void update(DocumentEvent e) {
-                if (hasDataOnRequiredFields(fieldList)) {
+                //The 'Add entry' button is enabled only if all the required fields contain data and if the user is not currently editing a record
+                if (hasDataOnRequiredFields(fieldList) && !handler.getHasRequestedRowEdit()) {
                     setButtonState(addNewEntryButton, true);
                 } else {
                     setButtonState(addNewEntryButton, false);
@@ -337,7 +328,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
         userNameField.getDocument().addDocumentListener(new SimpleDocumentListener() {
             public void update(DocumentEvent e) {
-                if (hasDataOnRequiredFields(fieldList)) {
+                if (hasDataOnRequiredFields(fieldList) && !handler.getHasRequestedRowEdit()) {
                     setButtonState(addNewEntryButton, true);
                 } else {
                     setButtonState(addNewEntryButton, false);
@@ -347,7 +338,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
         passwordField.getDocument().addDocumentListener(new SimpleDocumentListener() {
             public void update(DocumentEvent e) {
-                if (hasDataOnRequiredFields(fieldList)) {
+                if (hasDataOnRequiredFields(fieldList) && !handler.getHasRequestedRowEdit()) {
                     setButtonState(addNewEntryButton, true);
                 } else {
                     setButtonState(addNewEntryButton, false);
@@ -401,6 +392,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
         return 0;
     }
 
+    //This method is executed when the user selects the record editing option
     @Override
     public void onEdit(AccountRecord accountRecord) {
         if (accountRecord == null) {
@@ -430,8 +422,12 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
         //Disables the 'Add entry" button in order to prevent the insertion of a duplicate record containing the data that is about to be edited
         addNewEntryButton.setEnabled(false);
+
+        //Sets flag which indicates that the user is editing a row
+        handler.setHasRequestedRowEdit(true);
     }
 
+    //Method for checking if all the required fields are populated with data
     public boolean hasDataOnRequiredFields(List<JComponent> fieldList) {
         if (fieldList == null) {
             return false;
@@ -450,6 +446,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
         return true;
     }
 
+    //Generic method for setting the state(enabled/disabled) of a specified button
     public void setButtonState(JButton targetButton, boolean state) {
         if (targetButton == null) {
             return;
@@ -458,6 +455,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
         targetButton.setEnabled(state);
     }
 
+    //Generic method for clearing data from the specified fields
     public void resetFormFields(List<JComponent> fieldList) {
         if (fieldList == null) {
             return;

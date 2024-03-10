@@ -14,7 +14,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.text.TableView;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -326,7 +325,7 @@ public class UserTableOperations extends MouseAdapter {
 //					}
 //
 //					System.out.println("Table was updated!");
-					editEntry();
+					//editEntry();
 
 				} else if (e.getType() == TableModelEvent.INSERT) {
 
