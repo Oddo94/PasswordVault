@@ -16,7 +16,7 @@ import com.razvan.utils.SenderAccountCredentials;
 import com.razvan.utils.XMLFileReader;
 
 public class ApplicationInstallManager {
-	public static final String APP_MAIN_FOLDER_PATH = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault-test";
+	public static final String APP_MAIN_FOLDER_PATH = System.getProperty("user.home") + "/AppData/Roaming/PasswordVault";
 
 	public static void createAppFoldersAndFiles() {
 
