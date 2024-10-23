@@ -397,24 +397,6 @@ public class UserTableOperations extends MouseAdapter {
 		});		
 	}
 
-	//Adding MouseListener for the copy option displayed when right clicking on a table cell
-	public void addMouseListenerToCopyOption(JMenuItem popupItem, int entryNumber) {
-		popupItem.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				DefaultTableModel dtm = (DefaultTableModel) userDataTable.getModel();
-
-				String dataToCopy = (String) dtm.getValueAt(userDataTable.getSelectedRow(), userDataTable.getSelectedColumn());
-				//System.out.println(dataToCopy);
-
-				//Code for copying selected cell content to clipboard
-				StringSelection stringSelection = new StringSelection(dataToCopy);
-				Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-				clipboard.setContents(stringSelection, null);
-				hasCopiedCellContent = true;
-			}
-		});
-	}
-
 	/*
 	 * Method used for retrieving table data. The string stores the data in the following format:
 	 * -the cell data contained in a row is separated by a ","
