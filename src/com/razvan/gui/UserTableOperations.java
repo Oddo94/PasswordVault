@@ -456,6 +456,32 @@ public class UserTableOperations extends MouseAdapter {
 	}
 
 
+	//Method used for retrieving the row index based on the content of the selected record
+	public int getSelectedRowIndexBasedOnRecord(AccountRecord accountRecord) {
+		Objects.requireNonNull(accountRecord, "The provided account record must not be null!");
+
+		int rowCount = userDataTable.getRowCount();
+		int columnCount = userDataTable.getColumnCount();
+
+		for (int i = 0; i < rowCount; i++) {
+			String accountName = userDataTable.getValueAt(i, 0).toString();
+			String userName = userDataTable.getValueAt(i, 1).toString();
+			String password = userDataTable.getValueAt(i, 2).toString();
+			String lastChangeDate = userDataTable.getValueAt(i, 3).toString();
+
+			if (accountName.equals(accountRecord.getAccountName())
+					&& userName.equals(accountRecord.getUsername())
+					&& password.equals(accountRecord.getPassword())
+					&& lastChangeDate.equals(accountRecord.getLastChangeDate())
+			) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
+
 	//Sets the table cell renderer so that the expired passwords are highlighted
 	private void setTableCellRendererForExpiredPasswordHighlight(JTable table) {
 		Objects.requireNonNull(table, "The table object provided for setting the cell renderer cannot be null.");
@@ -504,12 +530,11 @@ public class UserTableOperations extends MouseAdapter {
 		});
 	}
 
-	public int updateSelectedRow(AccountRecord accountRecord) {
+	public int updateSelectedRow(AccountRecord accountRecord, int selectedRowIndex) {
 		if (accountRecord == null) {
 			return -1;
 		}
 
-		int selectedRowIndex = userDataTable.getSelectedRow();
 		userDataTable.setValueAt(accountRecord.getAccountName(), selectedRowIndex, 0);
 		userDataTable.setValueAt(accountRecord.getUsername(),selectedRowIndex, 1);
 		userDataTable.setValueAt(accountRecord.getPassword(),selectedRowIndex, 2);

@@ -8,6 +8,7 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowAdapter;
@@ -46,6 +47,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
     private JDateChooser dateChooser = new JDateChooser();
 
     private List<JComponent> fieldList;
+    private AccountRecord originalAccountRecord;
 
 
     public WindowBuilder(UserDashboard userDashboard, UserTableOperations handler) {
@@ -199,7 +201,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
     private String collectNewEntryData(List<JComponent> fieldList) {
         StringBuilder rowData = new StringBuilder();
 
-        //The objects are casted because the fieldsArray is of type JComponent and its components need to be treated differently according to their specific type
+        //The objects are cast because the fieldsArray is of type JComponent and its components need to be treated differently according to their specific type
         for (int i = 0; i < fieldList.size(); i++) {
             String fieldContent = "";
             if (fieldList.get(i).getClass() == JTextField.class) {
@@ -285,8 +287,14 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
             String lastChangeDate = sdf.format(dateChooser.getDate());
 
             AccountRecord accountRecord = new AccountRecord(accountName, userName, password, lastChangeDate);
+            int rowIndex = handler.getSelectedRowIndexBasedOnRecord(originalAccountRecord);
 
-            int updateResult = handler.updateSelectedRow(accountRecord);
+            if (rowIndex == -1) {
+                JOptionPane.showMessageDialog(userDashboard, "An error occurred while retrieving the selected row index!", "Data edit", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            int updateResult = handler.updateSelectedRow(accountRecord, rowIndex);
 
             if (updateResult == -1) {
                 JOptionPane.showMessageDialog(userDashboard, "An error occurred while updating the selected record!", "Data edit", JOptionPane.ERROR_MESSAGE);
@@ -304,6 +312,11 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
             //Sets record editing flag to false
             handler.setHasRequestedRowEdit(false);
 
+            //Disables the 'Save changes' button after a successful edit
+            saveChangesButton.setEnabled(false);
+
+            //Resets the original account record object
+            originalAccountRecord = null;
         });
 
         userDashboard.addWindowListener(new WindowAdapter() {
@@ -425,6 +438,9 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
 
         //Sets flag which indicates that the user is editing a row
         handler.setHasRequestedRowEdit(true);
+
+        //The account record object before being modified
+        originalAccountRecord = accountRecord;
     }
 
     //Method for checking if all the required fields are populated with data
