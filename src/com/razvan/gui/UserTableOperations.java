@@ -72,10 +72,10 @@ public class UserTableOperations extends MouseAdapter {
 
 		//Checks to see if the decrypted String contains any values
 		if(!"".equals(decryptedData)) {
-			/* If it contains at least one value then each entry will be split using "," as
+			/* If it contains at least one value then each entry will be split using "|" as
 			  separator and the resulting array will be used to create a new table row */
 			for (String entry : tableData) {
-				dtm.addRow(entry.split(","));
+				dtm.addRow(entry.split("\\|"));
 			}
 		}
 
@@ -416,7 +416,7 @@ public class UserTableOperations extends MouseAdapter {
 					sb.append("\n");
 					break;
 				}
-				sb.append(dtm.getValueAt(i, j) + ",");
+				sb.append(dtm.getValueAt(i, j) + "|");
 			}
 		}
 
