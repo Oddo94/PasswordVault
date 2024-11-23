@@ -72,10 +72,10 @@ public class UserTableOperations extends MouseAdapter {
 
 		//Checks to see if the decrypted String contains any values
 		if(!"".equals(decryptedData)) {
-			/* If it contains at least one value then each entry will be split using "," as
+			/* If it contains at least one value then each entry will be split using "|" as
 			  separator and the resulting array will be used to create a new table row */
 			for (String entry : tableData) {
-				dtm.addRow(entry.split(","));
+				dtm.addRow(entry.split("\\|"));
 			}
 		}
 
@@ -93,6 +93,9 @@ public class UserTableOperations extends MouseAdapter {
 
 		//Creates the table
 		userDataTable = new JTable(numRows,numColumns);
+		
+		// //Sets the table cell renderer in order to allow the highlighting of expired passwords
+		// setTableCellRendererForExpiredPasswordHighlight(userDataTable);
 
 		//Sets the table cell renderer in order to allow the highlighting of expired passwords
 		setTableCellRendererForExpiredPasswordHighlight(userDataTable);
@@ -121,7 +124,6 @@ public class UserTableOperations extends MouseAdapter {
 		JPanel tablePanel = new JPanel();
 		JScrollPane tableScrollPane = new JScrollPane(userDataTable);
 		tablePanel.add(tableScrollPane);
-
 
 		//Adds the table panel to the user dashboard
 		userDashboard.add(tablePanel, new BorderLayout().CENTER);
@@ -392,7 +394,7 @@ public class UserTableOperations extends MouseAdapter {
 				}
 
 			}
-		});
+		});		
 	}
 
 	/*
@@ -414,7 +416,7 @@ public class UserTableOperations extends MouseAdapter {
 					sb.append("\n");
 					break;
 				}
-				sb.append(dtm.getValueAt(i, j) + ",");
+				sb.append(dtm.getValueAt(i, j) + "|");
 			}
 		}
 

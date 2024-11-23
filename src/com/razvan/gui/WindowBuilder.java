@@ -8,7 +8,6 @@ import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.WindowAdapter;
@@ -220,12 +219,12 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
                 fieldContent = formattedDate.toString();
             }
 
-            //The separator "," is added only if the processing has not reached the last object of the array
+            //The separator "|" is added only if the processing has not reached the last object of the array
             if (i != fieldList.size() - 1) {
                 if ("".equals(fieldContent)) {
-                    rowData.append("null" + ",");
+                    rowData.append("null" + "|");
                 } else {
-                    rowData.append(fieldContent + ",");
+                    rowData.append(fieldContent + "|");
 
                 }
             } else {
@@ -266,7 +265,7 @@ public class WindowBuilder extends MouseAdapter implements EditEventListener {
             handler.addNewEntry(rowData);
             UserTableOperations.userOption = JOptionPane.showConfirmDialog(null, "Do you want to insert a new row?", "Data saving", JOptionPane.YES_NO_CANCEL_OPTION);
             if (UserTableOperations.userOption == 0) {
-                handler.getUserDataTableModel().addRow(rowData.split(","));
+                handler.getUserDataTableModel().addRow(rowData.split("\\|"));
                 //Resets the form fields after the new record insertion
                 resetFormFields(fieldList);
             }
